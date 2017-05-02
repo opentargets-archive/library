@@ -1,5 +1,5 @@
 {
-  "name": "ot.search",
+  "name": "ot-search",
   "version": "0.0.1",
   "description": "Interface to the open targets document repository search",
   "author": "Miguel Pignatelli",
@@ -19,7 +19,7 @@
     "lodash": "^4.17.4",
     "material-design-icons": "^3.0.1",
     "moment": "^2.15.0",
-    "pubmedSearchViewer": "^0.0.0",
+    "ots-graph": "^0.0.1",
     "quasar-framework": "^0.13.4",
     "roboto-fontface": "^0.7.0",
     "tnt.api": "^0.1.1",
