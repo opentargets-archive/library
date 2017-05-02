@@ -4,7 +4,7 @@
       OpenTargets Search v{{version}} -- Footer
     </q-toolbar-title>
     <div class="right-items">
-      <a href="https://github.com/odranoelBR/vue-quasar-admin-example" class="text-white">
+      <a href="https://github.com/opentargets/search" class="text-white">
         <i class="fa fa-2x fa-github"></i>
       </a>
     </div>
