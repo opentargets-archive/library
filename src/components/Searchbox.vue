@@ -17,7 +17,7 @@
 
 <script type="text/javascript">
   // import * as d3 from 'd3';
-  import pubmedSearch from 'pubmedSearchViewer';
+  import otSearch from 'ots-graph';
   import entitiesMenu from './EntitiesMenu.vue';
 
   export default {
@@ -57,7 +57,7 @@
         const graphContainer = document.getElementById('graphContainer');
         graphContainer.innerHTML = '';
 
-        const graph = pubmedSearch()
+        const graph = otSearch()
           .width(width)
           .height(height)
           .query(vueCtx.inputQuery)
