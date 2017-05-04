@@ -7,11 +7,16 @@
     <!-- Add new entities -->
     <entities-menu @fields="setFields"></entities-menu>
 
+
     <!-- Display the results -->
     <div>
       <p class="tip" v-if="searchQuery">Graph for <b>{{searchQuery}}</b></p>
       <div id="graphContainer"></div>
     </div>
+
+    <!-- Abstracts table -->
+    <!--<abstracts :query="searchQuery"></abstracts>-->
+
   </div>
 </template>
 
@@ -19,6 +24,7 @@
   // import * as d3 from 'd3';
   import otSearch from 'ots-graph';
   import entitiesMenu from './EntitiesMenu.vue';
+  import abstracts from './Abstracts.vue';
 
   export default {
     name: 'searchbox',
@@ -32,6 +38,7 @@
     },
     components: {
       'entities-menu': entitiesMenu,
+      abstracts,
     },
     methods: {
       setFields(data, colors) {

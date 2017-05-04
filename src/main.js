@@ -15,7 +15,6 @@ require(`quasar-framework/dist/quasar.${__THEME}.css`);
 require('./main.scss');
 // ==============================
 
-
 Vue.use(Quasar); // Install Quasar Framework
 
 Quasar.start(() => {

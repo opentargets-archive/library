@@ -1,7 +1,7 @@
 <template>
   <q-layout>
     <masthead slot="header"></masthead>
-    <div id="searchbox">
+    <div id="searchbox" class="layout-view">
       <div>
         <searchbox class="layout-view"></searchbox>
       </div>
