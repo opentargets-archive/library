@@ -1,9 +1,9 @@
 <template>
   <q-layout>
     <masthead slot="header"></masthead>
-    <div id="searchbox" class="layout-view">
+    <div id="searchbox" class="layout-view" ref="wrap">
       <div>
-        <searchbox class="layout-view"></searchbox>
+        <searchbox></searchbox>
       </div>
     </div>
     <mastfoot slot="footer"></mastfoot>
@@ -26,15 +26,16 @@
 </script>
 
 <style>
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
+  /*q-layout {*/
+    /*font-family: 'Avenir', Helvetica, Arial, sans-serif;*/
+    /*-webkit-font-smoothing: antialiased;*/
+    /*-moz-osx-font-smoothing: grayscale;*/
+    /*text-align: center;*/
+    /*color: #2c3e50;*/
+  /*}*/
 
   #searchbox {
     width:100%;
   }
+
 </style>

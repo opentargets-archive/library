@@ -12,8 +12,8 @@
         </q-tooltip>
       </i>
     </span>
-    <span v-for="entity in entities" class="chip-item" v-bind:style="{color:colors[entity.field]}">
-      {{entity.field}}
+    <span v-for="entity in entities" class="chip-item" v-bind:style="{'background-color':colors[entity.field]}">
+      {{entity.label}}
       <i @click="removeTerm(entity.field)" class="fa fa-close">
         <q-tooltip
           anchor="center right"
@@ -31,17 +31,18 @@
 <script type="text/javascript">
   import { Dialog } from 'quasar-framework';
   import { filter } from 'lodash';
-  import * as chromatic from 'd3-scale-chromatic';
-
-  const colors = chromatic.schemeSet1;
+  import entitiesInfo from '../services/entities';
 
   export default {
     name: 'entities-menu',
     data() {
       return {
         entities: [],
-        colors: {},
+        colors: entitiesInfo.colors,
       };
+    },
+    mounted() {
+      this.entities = entitiesInfo.defaultEntities;
     },
     watch: {
       entities() {
@@ -60,27 +61,21 @@
           form: {
             field: {
               type: 'radio',
-              items: [
-                { label: 'Abstract', value: 'abstract' },
-                { label: 'Title', value: 'title' },
-                { label: 'Author', value: 'authors.full_name' },
-                { label: 'Keywords', value: 'keywords' },
-                { label: 'Mesh term', value: 'mesh_headings.label' },
-              ],
+              items: entitiesInfo.vals,
               model: '',
             },
-            terms: {
+            certainty: {
               type: 'numeric',
-              label: 'Max terms per hop',
-              model: 10,
-              min: 3,
+              label: 'Certainty',
+              model: 3,
+              min: 1,
               max: 20,
             },
             size: {
               type: 'numeric',
               label: 'Size',
               model: 10,
-              min: 3,
+              min: 1,
               max: 20,
             },
           },
@@ -91,12 +86,10 @@
               handler(data) {
                 scope.entities.push({
                   field: data.field,
-                  min_doc_count: data.terms,
+                  label: entitiesInfo.term2label[data.field],
                   size: data.size,
-                  // color: colors[scope.entities.length % colors.length],
+                  min_doc_count: data.certainty,
                 });
-
-                scope.colors[data.field] = colors[scope.entities.length % colors.length];
               },
             },
           ],
@@ -108,11 +101,9 @@
 
 <style lang="scss">
   .main-menu-icons {
-    position: absolute;
     margin-top: 10px;
     margin-left: 10px;
     color: grey;
-    cursor: pointer;
     :hover {
       color: black;
     }
@@ -122,7 +113,10 @@
     vertical-align: baseline;
     margin-left: 10px;
     i {
+      cursor: pointer;
       vertical-align: inherit;
     }
+    color: black;
+    padding: 3px;
   }
 </style>
