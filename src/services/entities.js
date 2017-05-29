@@ -57,6 +57,13 @@ export default {
     keywords: 'Keywords',
     'mesh_headings.label': 'Mesh terms',
   },
+  label2term: {
+    Abstract: 'abstract',
+    Title: 'title',
+    Authors: 'authors.full_name',
+    Keywords: 'keywords',
+    'Mesh terms': 'mesh_headings.label',
+  },
   colors: {
     abstract: '#ffd92f',             // yellow
     title: '#66c2a5',                // greenish

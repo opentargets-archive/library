@@ -20,12 +20,14 @@
 <script>
   import otSearch from 'ots-graph';
 
+  let graph; // The graph
   export default {
     name: 'results-graph',
     props: [
       'query',
       'fields',
       'colors',
+      'unselect', // Programmatic unselection of nodes
     ],
     data() {
       return {
@@ -33,8 +35,23 @@
         showFailed: false,
       };
     },
+    computed: {
+      // compoundProperty is made to watch for both properties (query and fields) since Vue.js doesn't have a watchGroup or similar
+      compoundProperty() {
+        /* eslint no-unused-expressions: 0 */
+        // Only need to reference the properties
+        this.query;
+        this.fields;
+
+        // different value every time to make sure the watch on this property is fired
+        return Date.now();
+      },
+    },
     watch: {
-      query() {
+      unselect() {
+        graph.select(this.unselect);
+      },
+      compoundProperty() {
         // the size of the container...
         const width = document.getElementById('graphContainer').offsetWidth;
         const height = window.innerHeight - (window.innerHeight * 0.4);
@@ -57,9 +74,7 @@
           cleanFields.push(clonedObj);
         });
 
-        console.log(cleanFields);
-
-        const graph = otSearch()
+        graph = otSearch()
           .width(width)
           .height(height)
           .nodeSize(10)
@@ -74,6 +89,12 @@
         graph.on('failed', () => {
           vueCtx.showFailed = true;
           vueCtx.showSpinner = false;
+        });
+        graph.on('selected', (v) => {
+          this.$emit('selected', v.selected);
+        });
+        graph.on('unselected', (v) => {
+          this.$emit('selected', v.selected);
         });
       },
     },

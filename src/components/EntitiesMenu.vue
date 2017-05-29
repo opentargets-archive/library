@@ -101,6 +101,7 @@
 
 <style lang="scss">
   .main-menu-icons {
+    /*position: absolute;*/
     margin-top: 10px;
     margin-left: 10px;
     color: grey;
@@ -110,6 +111,7 @@
   }
 
   .chip-item {
+    opacity: 0.8;
     vertical-align: baseline;
     margin-left: 10px;
     i {
