@@ -58,7 +58,7 @@
         currFields: {},
         colors: {},
         selectedEntities: [],
-        unselect: '',
+        unselect: [],
       };
     },
     components: {
@@ -69,11 +69,12 @@
     },
     methods: {
       removeSelection(who) {
-        this.unselect = who;
+        this.unselect = [who];
       },
       addSearchTerm(who) {
         const query = lucene.compose(this.searchQuery, [who]);
         this.inputQuery = query;
+        this.unselect = this.selectedEntities;
         this.selectedEntities = [];
         this.doSearch();
       },

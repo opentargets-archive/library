@@ -27,7 +27,7 @@
       'query',
       'fields',
       'colors',
-      'unselect', // Programmatic unselection of nodes
+      'unselect', // Programmatic unselection of nodes, expects and array of nodes to unselect
     ],
     data() {
       return {
@@ -49,7 +49,10 @@
     },
     watch: {
       unselect() {
-        graph.select(this.unselect);
+        this.unselect.forEach((n) => {
+          graph.select(n);
+        });
+        // graph.select(this.unselect);
       },
       compoundProperty() {
         // the size of the container...

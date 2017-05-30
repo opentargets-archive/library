@@ -1,6 +1,6 @@
 <template>
   <div> <!-- root -->
-    <div v-show="apiUrl.length" class="table-container">
+    <div v-show="totalAbstracts" class="table-container">
       <div class="total-abstracts">
         Total abstracts: {{totalAbstracts}}
       </div>
@@ -40,11 +40,17 @@
       Vuetable,
       MugenScroll,
     },
+    computed: {
+      apiUrl() {
+        const query = lucene.compose(this.query, this.entities);
+        return `${apiBaseUrl}?query=${query}`;
+      },
+    },
     data() {
       return {
         loading: false,
         totalAbstracts: 0,
-        apiUrl: '',
+//        apiUrl: '',
         fields: [
           {
             name: '_source.authors',
@@ -74,29 +80,9 @@
       };
     },
     props: ['query', 'entities'],
-    watch: {
-      entities() {
-        console.log('entities for abstract retrieving...');
-        console.log(this.entities);
-        const query = lucene.compose(this.query, this.entities);
-        console.log(query);
-
-        this.query = query;
-      },
-      query() {
-        if (!this.query) {
-          return;
-        }
-
-        this.apiUrl = `${apiBaseUrl}?query=${this.query}`;
-        // this.$refs.vuetable.refresh();
-      },
-    },
     methods: {
       transform(data) {
         // get the number of records;
-        console.log('abstract data...');
-        console.log(data);
         this.totalAbstracts = data.hits.total;
         return data;
       },
