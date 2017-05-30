@@ -1,4 +1,8 @@
 const entities = {
+  entities: {
+    label: 'Entities',
+    value: 'text_mined_entities.noun_phrases.top_chunks',
+  },
   abstract: {
     label: 'Abstract',
     value: 'abstract',
@@ -23,6 +27,7 @@ const entities = {
 
 export default {
   vals: [
+    entities.entities,
     entities.abstract,
     entities.title,
     entities.author,
@@ -31,26 +36,32 @@ export default {
   ],
   defaultEntities: [
     {
-      field: entities.abstract.value,
-      label: entities.abstract.label,
-      min_doc_count: 5,
+      field: entities.entities.value,
+      label: entities.entities.label,
+      min_doc_count: 3,
       size: 10,
     },
-    {
-      field: entities.author.value,
-      label: entities.author.label,
-      min_doc_count: 5,
-      size: 10,
-    },
-    {
-      field: entities.mesh.value,
-      label: entities.mesh.label,
-      min_doc_count: 5,
-      size: 10,
-    },
-
+    // {
+    //   field: entities.abstract.value,
+    //   label: entities.abstract.label,
+    //   min_doc_count: 5,
+    //   size: 10,
+    // },
+    // {
+    //   field: entities.author.value,
+    //   label: entities.author.label,
+    //   min_doc_count: 5,
+    //   size: 10,
+    // },
+    // {
+    //   field: entities.mesh.value,
+    //   label: entities.mesh.label,
+    //   min_doc_count: 5,
+    //   size: 10,
+    // },
   ],
   term2label: {
+    entities: 'Entities',
     abstract: 'Abstract',
     title: 'Title',
     'authors.full_name': 'Authors',
@@ -58,6 +69,7 @@ export default {
     'mesh_headings.label': 'Mesh terms',
   },
   label2term: {
+    Entities: 'entities',
     Abstract: 'abstract',
     Title: 'title',
     Authors: 'authors.full_name',
@@ -65,10 +77,11 @@ export default {
     'Mesh terms': 'mesh_headings.label',
   },
   colors: {
-    abstract: '#ffd92f',             // yellow
-    title: '#66c2a5',                // greenish
-    'authors.full_name': '#e78ac3',  // purple
-    keywords: '#a6d854',           // green
-    'mesh_headings.label': '#fdb462', // orange
+    'text_mined_entities.noun_phrases.top_chunks': '#8da0cb',
+    abstract: '#ffd92f',
+    title: '#66c2a5',
+    'authors.full_name': '#e78ac3',
+    keywords: '#a6d854',
+    'mesh_headings.label': '#fdb462',
   },
 };
