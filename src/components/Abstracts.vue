@@ -6,15 +6,18 @@
       </div>
       <vuetable ref="vuetable"
                 :load-on-start="loadOnStart"
-                :query-parameters="queryParams"
+                :query-params="queryParams"
                 :api-url="apiUrl"
                 :fields="fields"
+                :per-page= "perPage"
                 data-path="hits.hits"
       ></vuetable>
 
-      <!--<mugen-scroll :handler="fetchData" scroll-container="wrap">-->
-      <!--loading...-->
-      <!--</mugen-scroll>-->
+      <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="30" infinite-scroll-immediate-check=false>
+        <div class="spinner-container">
+          <i class="fa fa-spinner fa-spin"></i>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -22,35 +25,38 @@
 
 <script>
   import Vuetable from 'vuetable-2/src/components/Vuetable.vue';
-  import MugenScroll from 'vue-mugen-scroll';
+  import infiniteScroll from 'vue-infinite-scroll';
+//  import MugenScroll from 'vue-mugen-scroll';
   import lucene from '../services/lucene';
-
-  // import * as lucene from 'lucene';
-  // import reduce from 'lodash';
-  // import entitiesInfo from '../services/entities';
-
-  // import VuetablePagination from 'vuetable-2/src/components/VuetablePagination.vue';
-
-  // require('../../node_modules/vuetable-2/dist/vuetable-2.css'); // Not sure it is doing anything
 
   const apiBaseUrl = 'https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/search';
 
   export default {
     components: {
       Vuetable,
-      MugenScroll,
+    },
+    directives: {
+      infiniteScroll,
     },
     computed: {
       apiUrl() {
         const query = lucene.compose(this.query, this.entities);
-        return `${apiBaseUrl}?query=${query}`;
+        let search = `query=${query}`;
+        if (this.page > 0) {
+          search = `${search}&search_after=${this.page}`;
+        }
+//        return `${apiBaseUrl}?query=${query}`;
+        const url = `${apiBaseUrl}?${search}`;
+        return url;
       },
     },
     data() {
       return {
         loading: false,
         totalAbstracts: 0,
-//        apiUrl: '',
+        perPage: 10,
+        page: 0,
+        acc: [],
         fields: [
           {
             name: '_source.authors',
@@ -74,7 +80,7 @@
         loadOnStart: false,
         queryParams: {
           sort: 'sort',
-          page: 'from',
+          page: 'from', // it should be search_after, but only when it has to be present. So by default we keep it as 'from' which is ignored by the api
           perPage: 'size',
         },
       };
@@ -82,22 +88,35 @@
     props: ['query', 'entities'],
     methods: {
       transform(data) {
+        /* eslint no-param-reassign: 0 */
+
         // get the number of records;
+        // buffer the current entries in 'acc'
+        this.acc = [...this.acc, ...data.hits.hits];
+        data.hits.hits = this.acc;
+
         this.totalAbstracts = data.hits.total;
         return data;
       },
+
       // fetch data is here to work with the infinite scrolling (not working for now)
-      fetchData() {
+      loadMore() {
         this.loading = true;
-        console.log('time to fetch more data...');
-        setTimeout(() => {
-          this.loading = false;
-        }, 2000);
+
+//        this.queryParams.page = 'search_after';
+        this.loading = false;
+        // this.$refs.vuetable.refresh();
+        this.page = this.acc[this.acc.length - 1].sort;
+
+        //        this.$refs.vuetable.refresh();
+        // this.$refs.vuetable.gotoPage(page);
       },
+
       abstractCbak(info) {
         const html = `<h6>${info.title}</h6><div>${info.abstract}</div>`;
         return html;
       },
+
       authorsCbak(authorsArr) {
         if (authorsArr.length === 1) {
           return authorsArr[0].full_name;
@@ -113,6 +132,13 @@
 </script>
 
 <style lang="scss">
+
+  .spinner-container {
+    width: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 3em;
+  }
 
   .table-container {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
