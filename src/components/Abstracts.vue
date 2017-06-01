@@ -101,14 +101,12 @@
 
       // fetch data is here to work with the infinite scrolling (not working for now)
       loadMore() {
-        this.loading = true;
+//        this.loading = true;
+//        this.loading = false;
 
-//        this.queryParams.page = 'search_after';
-        this.loading = false;
-        // this.$refs.vuetable.refresh();
         this.page = this.acc[this.acc.length - 1].sort;
 
-        //        this.$refs.vuetable.refresh();
+        // this.$refs.vuetable.refresh();
         // this.$refs.vuetable.gotoPage(page);
       },
 

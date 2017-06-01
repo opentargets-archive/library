@@ -28,6 +28,8 @@
       'fields',
       'colors',
       'unselect', // Programmatic unselection of nodes, expects and array of nodes to unselect
+      'width',
+      'height',
     ],
     data() {
       return {
@@ -55,10 +57,6 @@
         // graph.select(this.unselect);
       },
       compoundProperty() {
-        // the size of the container...
-        const width = document.getElementById('graphContainer').offsetWidth;
-        const height = window.innerHeight - (window.innerHeight * 0.4);
-
         const vueCtx = this;
         vueCtx.showSpinner = true;
         vueCtx.showFailed = false;
@@ -78,8 +76,8 @@
         });
 
         graph = otSearch()
-          .width(width)
-          .height(height)
+          .width(this.width)
+          .height(this.height)
           .nodeSize(10)
           .query(vueCtx.query)
           .fields(cleanFields)
