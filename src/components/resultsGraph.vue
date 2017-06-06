@@ -9,7 +9,7 @@
 
 
     <div class="topics-menu">
-      <div v-for="topic in topics">
+      <div v-for="topic in topics" :style="{'background-color': topic.color, 'opacity':'0.8'}" class="topic-item" @click="selectTopic(topic);">
         {{topic.name}} -- {{topic.vertices.length}}
       </div>
 
@@ -58,6 +58,11 @@
         return Date.now();
       },
     },
+    methods: {
+      selectTopic(topic) {
+        graph.clickTopic(topic);
+      },
+    },
     watch: {
       unselect() {
         this.unselect.forEach((n) => {
@@ -97,7 +102,7 @@
           vueCtx.showSpinner = false;
           // const gr = graphData.graph;
           const topics = graphData.topics;
-          vueCtx.topics = topics.slice(0, 10);
+          vueCtx.topics = topics.slice(0, 12);
         });
         graph.on('failed', () => {
           vueCtx.showFailed = true;
@@ -135,5 +140,11 @@
     right: 10px;
     padding: 10px;
     background: white;
+
+    >.topic-item {
+      margin-top: 5px;
+      padding: 5px;
+      cursor: pointer;
+    }
   }
 </style>

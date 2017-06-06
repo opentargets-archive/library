@@ -14,7 +14,7 @@
       ></vuetable>
 
       <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="30" infinite-scroll-immediate-check=false>
-        <div class="spinner-container">
+        <div v-show="moreToLoad" class="spinner-container">
           <i class="fa fa-spinner fa-spin"></i>
         </div>
       </div>
@@ -42,11 +42,12 @@
       apiUrl() {
         const query = lucene.compose(this.query, this.entities);
         let search = `query=${query}`;
-        if (this.page > 0) {
+        if (this.page) {
           search = `${search}&search_after=${this.page}`;
         }
 //        return `${apiBaseUrl}?query=${query}`;
         const url = `${apiBaseUrl}?${search}`;
+        console.log(`new url... ${url}`);
         return url;
       },
     },
@@ -55,8 +56,9 @@
         loading: false,
         totalAbstracts: 0,
         perPage: 10,
-        page: 0,
+        page: '',
         acc: [],
+        moreToLoad: true,
         fields: [
           {
             name: '_source.authors',
@@ -96,6 +98,15 @@
         data.hits.hits = this.acc;
 
         this.totalAbstracts = data.hits.total;
+
+        // Show or hide the spinner depending on the number of abstracts to load
+        if (this.totalAbstracts > this.acc.length) {
+          this.moreToLoad = true;
+        }
+        else {
+          this.moreToLoad = false;
+        }
+
         return data;
       },
 
@@ -104,7 +115,9 @@
 //        this.loading = true;
 //        this.loading = false;
 
-        this.page = this.acc[this.acc.length - 1].sort;
+        if (this.moreToLoad) {
+          this.page = this.acc[this.acc.length - 1].sort.join('-');
+        }
 
         // this.$refs.vuetable.refresh();
         // this.$refs.vuetable.gotoPage(page);
