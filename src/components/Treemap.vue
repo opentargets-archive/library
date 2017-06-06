@@ -24,10 +24,15 @@
         const hierarchy = chunks2hierarchy(this.chunks);
         console.log(hierarchy);
 
+        const w = this.width;
+        const h = this.height;
+
         const container = document.getElementById('resultsTreemap');
         // Build a new treemap... (or update an existing treemap??)
         const tmap = otsTreemap()
           .data(hierarchy)
+          .width(w * 0.6)
+          .height(h * 0.8)
           .on('click', (d) => {
             console.log('in search we received the clicked element...');
             console.log(d);

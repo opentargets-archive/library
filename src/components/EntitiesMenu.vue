@@ -69,14 +69,14 @@
               label: 'Certainty',
               model: 3,
               min: 1,
-              max: 20,
+              max: 200,
             },
             size: {
               type: 'numeric',
               label: 'Size',
               model: 10,
               min: 1,
-              max: 20,
+              max: 200,
             },
           },
           buttons: [

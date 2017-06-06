@@ -38,8 +38,8 @@ export default {
     {
       field: entities.entities.value,
       label: entities.entities.label,
-      min_doc_count: 3,
-      size: 10,
+      min_doc_count: 1,
+      size: 200,
     },
     // {
     //   field: entities.abstract.value,

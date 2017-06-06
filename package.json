@@ -21,7 +21,7 @@
     "lucene": "^1.1.1",
     "material-design-icons": "^3.0.1",
     "moment": "^2.15.0",
-    "ots-graph": "^0.0.7",
+    "ots-graph": "^0.0.8",
     "ots-treemap": "file:///Users/pignatelli/src/repos/searchTreemap",
     "quasar-framework": "^0.13.4",
     "roboto-fontface": "^0.7.0",

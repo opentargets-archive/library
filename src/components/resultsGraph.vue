@@ -7,6 +7,14 @@
       <i class="fa fa-spinner fa-2x fa-spin message" aria-hidden="true"></i>
     </div>
 
+
+    <div class="topics-menu">
+      <div v-for="topic in topics">
+        {{topic.name}} -- {{topic.vertices.length}}
+      </div>
+
+    </div>
+
     <div class="page-spinner" v-show="showFailed">
       <div class="message">
         No graph to show
@@ -35,6 +43,7 @@
       return {
         showSpinner: false,
         showFailed: false,
+        topics: [],
       };
     },
     computed: {
@@ -84,8 +93,11 @@
           .colors(vueCtx.colors);
 
         graph(document.getElementById('graphContainer'));
-        graph.on('loaded', () => {
+        graph.on('loaded', (graphData) => {
           vueCtx.showSpinner = false;
+          // const gr = graphData.graph;
+          const topics = graphData.topics;
+          vueCtx.topics = topics.slice(0, 10);
         });
         graph.on('failed', () => {
           vueCtx.showFailed = true;
@@ -116,5 +128,12 @@
     >.message {
       margin-top:150px;
     }
+  }
+
+  .topics-menu {
+    position:absolute;
+    right: 10px;
+    padding: 10px;
+    background: white;
   }
 </style>
