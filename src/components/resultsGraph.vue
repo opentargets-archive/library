@@ -120,11 +120,6 @@
 </script>
 
 <style lang="scss">
-  /*.tip {*/
-    /*position:absolute;*/
-    /*right: 10px;*/
-  /*}*/
-
   .page-spinner {
     width: 10%;
     height: 300px;
