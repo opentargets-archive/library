@@ -114,6 +114,16 @@
         graph.on('unselected', (v) => {
           this.$emit('selected', v.selected);
         });
+        graph.on('topicSelected', (t) => {
+          console.log('topic selected!');
+          console.log(t);
+          this.$emit('selectedTopic', t);
+        });
+        graph.on('topicUnselected', (t) => {
+          console.log('topic unselected!');
+          console.log(t);
+          this.$emit('selectedTopic');
+        });
       },
     },
   };

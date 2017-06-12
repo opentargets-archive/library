@@ -1,19 +1,31 @@
 <template>
   <div class="facets-container">
-    <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
-    <treemap :width="width" :height="height" :chunks="topChunks" :loading="loading"></treemap>
+    <div class="row gutter wrap justify-stretch content-center text-center">
+      <!-- Treemap -->
+      <div class="width-2of3">
+        <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
+        <treemap :width="width" :height="height" :chunks="topChunks" :loading="loading"></treemap>
+      </div>
+
+      <!-- Trends -->
+      <div class="auto">
+        <trends :query="query"></trends>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios';
   import treemap from './Treemap.vue';
+  import trends from './Trends.vue';
 
   export default {
     name: 'facets',
     props: ['width', 'height', 'query'],
     components: {
       treemap,
+      trends,
     },
     data() {
       return {
@@ -29,11 +41,9 @@
     },
     watch: {
       apiUrl() {
-        console.log(this.apiUrl);
         this.loading = true;
         axios.get(this.apiUrl)
           .then((resp) => {
-            console.log(resp);
             this.loading = false;
             this.topChunks = resp.data.aggregations.top_chunks_significant_terms.buckets;
             this.dataHistogram = resp.data.aggregations.pub_date_histogram.buckets;

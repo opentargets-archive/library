@@ -3,6 +3,21 @@ import * as lucene from 'lucene';
 export default {
   decode: lucene.parse,
   encode: lucene.toString,
+  compose2(query, topic, terms) {
+    let termSoFar = query;
+    if (topic && topic.name) {
+      const topicTerm = [`"${topic.name}"`, ...topic.vertices.map((v) => `"${v.term}"`)].join(' OR ');
+      termSoFar = `${termSoFar} AND (${topicTerm})`;
+    }
+
+    if (terms && terms.length) {
+      terms.forEach((t) => {
+        termSoFar = `${termSoFar} + AND text_mined_entities.noun_phrases.top_chunks:${t}`;
+      });
+    }
+
+    return termSoFar;
+  },
   compose(query, entities) {
     const leftAST = this.decode(query);
     if (!entities || !entities.length) {

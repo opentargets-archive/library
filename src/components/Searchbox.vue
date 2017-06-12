@@ -37,7 +37,16 @@
         <entities-menu @fields="setFields"></entities-menu>
 
         <!-- Graph -->
-        <results-graph @selected="updateVertexSelection" :width="width" :height="height" :query="searchQuery" :fields="fields" :colors="colors" :unselect="unselect"></results-graph>
+        <results-graph
+          @selected="updateVertexSelection"
+          @selectedTopic="updateTopic"
+          :width="width"
+          :height="height"
+          :query="searchQuery"
+          :fields="fields"
+          :colors="colors"
+          :unselect="unselect"
+        ></results-graph>
       </div>
 
       <!-- Card container showing clicked entities -->
@@ -45,14 +54,19 @@
         <!--<q-transition name="slide">-->
         <div class="responsive entity-card-container" v-show="selectedEntities.length">
           <div v-for="entity in selectedEntities">
-            <entity-card @removeEntity="removeSelection" @addSearchTerm="addSearchTerm" :entity="entity" :colors="colors"></entity-card>
+            <entity-card
+              @removeEntity="removeSelection"
+              @addSearchTerm="addSearchTerm"
+              :entity="entity"
+              :colors="colors"
+            ></entity-card>
           </div>
         </div>
         <!--</q-transition>-->
       </div>
 
       <!-- Abstracts table -->
-      <abstracts :query="searchQuery" :entities="selectedEntities"></abstracts>
+      <abstracts :query="searchQuery" :topic="selectedTopic" :entities="selectedEntities"></abstracts>
 
     </div>
 
@@ -79,6 +93,7 @@
         currFields: {},
         colors: {},
         selectedEntities: [],
+        selectedTopic: {},
         unselect: [],
       };
     },
@@ -92,12 +107,10 @@
     computed: {
       width() {
         const w = window.innerWidth;
-        console.log(`width: ${w}`);
         return w;
       },
       height() {
         const h = window.innerHeight - (window.innerHeight * 0.4);
-        console.log(`height: ${h}`);
         return h;
       },
     },
@@ -111,6 +124,16 @@
         this.unselect = this.selectedEntities;
         this.selectedEntities = [];
         this.doSearch();
+      },
+      updateTopic(topic) {
+        if (topic) {
+          this.selectedTopic = topic;
+//          const newQuery = lucene.compose2(this.searchQuery, topic);
+//          console.log(newQuery);
+        }
+        else {
+          this.selectedTopic = undefined;
+        }
       },
       updateVertexSelection(selected) {
         this.selectedEntities = selected;

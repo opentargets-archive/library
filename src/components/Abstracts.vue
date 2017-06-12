@@ -1,5 +1,11 @@
 <template>
   <div> <!-- root -->
+    <div>
+      <div class="responsive topic-card" v-show="topic.name">
+        Topic: {{topic.name}}
+      </div>
+    </div>
+
     <div v-show="totalAbstracts" class="table-container">
       <div class="total-abstracts">
         Total abstracts: {{totalAbstracts}}
@@ -40,7 +46,7 @@
     },
     computed: {
       apiUrl() {
-        const query = lucene.compose(this.query, this.entities);
+        const query = lucene.compose2(this.query, this.topic, this.entities);
         let search = `query=${query}`;
         if (this.page) {
           search = `${search}&search_after=${this.page}`;
@@ -87,7 +93,7 @@
         },
       };
     },
-    props: ['query', 'entities'],
+    props: ['query', 'entities', 'topic'],
     methods: {
       transform(data) {
         /* eslint no-param-reassign: 0 */
