@@ -27,15 +27,16 @@
 
 <script>
   import otSearch from 'ots-graph';
+  import entities from '../services/entities';
 
   let graph; // The graph
   export default {
     name: 'results-graph',
     props: [
       'query',
-      'fields',
-      'colors',
-      'unselect', // Programmatic unselection of nodes, expects and array of nodes to unselect
+      // 'fields',
+      // 'colors',
+      // 'unselect', // Programmatic unselection of nodes, expects and array of nodes to unselect
       'width',
       'height',
     ],
@@ -44,6 +45,8 @@
         showSpinner: false,
         showFailed: false,
         topics: [],
+        fields: entities.defaultEntities,
+        colors: entities.colors,
       };
     },
     computed: {
@@ -90,7 +93,7 @@
         });
 
         graph = otSearch()
-          .width(this.width)
+          .width(this.width - 100)
           .height(this.height)
           .nodeSize(10)
           .query(vueCtx.query)
@@ -151,5 +154,9 @@
       padding: 5px;
       cursor: pointer;
     }
+  }
+
+  #graphContainer {
+    cursor: pointer;
   }
 </style>

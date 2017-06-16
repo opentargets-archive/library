@@ -12,7 +12,7 @@
 
   export default {
     name: 'trend-timeline',
-    props: ['trend', 'last'],
+    props: ['trend', 'last', 'width', 'height'],
     computed: {
       term() {
         const term = Object.keys(this.trend)[0];
@@ -41,8 +41,12 @@
       },
     },
     mounted() {
+      if (!this.width) {
+        return;
+      }
       const container = this.$el.querySelector('.ots-timeline');
-      const width = this.$el.clientWidth - 20;
+      // const width = this.$el.clientWidth - 20;
+      const width = this.width - 20;
       // const height = this.$el.clientHeight;
       const svg = d3.select(container)
         .append('svg')

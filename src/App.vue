@@ -14,27 +14,19 @@
 <script>
   import Masthead from './components/Masthead.vue';
   import Mastfoot from './components/Mastfoot.vue';
-  import Searchbox from './components/Searchbox.vue';
+  import Main from './components/Main.vue';
 
   export default {
     name: 'app',
     components: {
       masthead: Masthead,
       mastfoot: Mastfoot,
-      searchbox: Searchbox,
+      searchbox: Main,
     },
   };
 </script>
 
-<style>
-  /*q-layout {*/
-    /*font-family: 'Avenir', Helvetica, Arial, sans-serif;*/
-    /*-webkit-font-smoothing: antialiased;*/
-    /*-moz-osx-font-smoothing: grayscale;*/
-    /*text-align: center;*/
-    /*color: #2c3e50;*/
-  /*}*/
-
+<style lang="scss">
   #searchbox {
     width:100%;
   }

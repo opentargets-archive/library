@@ -1,7 +1,7 @@
 const entities = {
   entities: {
     label: 'Entities',
-    value: 'text_mined_entities.noun_phrases.top_chunks',
+    value: 'text_mined_entities.noun_phrases.chunks',
   },
   abstract: {
     label: 'Abstract',

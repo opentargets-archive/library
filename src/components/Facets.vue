@@ -6,11 +6,6 @@
         <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
         <treemap :width="width" :height="height" :chunks="topChunks" :loading="loading"></treemap>
       </div>
-
-      <!-- Trends -->
-      <div class="auto">
-        <trends :query="query"></trends>
-      </div>
     </div>
   </div>
 </template>

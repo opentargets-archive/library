@@ -9,7 +9,7 @@
       <div v-show="establishedTrends.length" class="width-1of2">
         <span class="trend-category-title">Established trends</span>
         <div class="trend-block" v-for="(trend, index) in establishedTrends">
-          <trend-timeline :trend="trend" :last="index==establishedTrends.length-1"></trend-timeline>
+          <trend-timeline :width="trendLineWidth" :height="height" :trend="trend" :last="index==establishedTrends.length-1"></trend-timeline>
         </div>
       </div>
 
@@ -17,7 +17,7 @@
       <div v-show="novelTrends.length" class="width-1of2">
         <span class="trend-category-title">Novel trends</span>
         <div class="trend-block" v-for="(trend, index) in novelTrends">
-          <trend-timeline :trend="trend" :last="index==novelTrends.length-1"></trend-timeline>
+          <trend-timeline :width="trendLineWidth" :height="height" :trend="trend" :last="index==novelTrends.length-1"></trend-timeline>
         </div>
       </div>
 
@@ -30,9 +30,8 @@
   import axios from 'axios';
   import trendLine from './TrendTimeline.vue';
 
-
   export default {
-    props: ['query'],
+    props: ['query', 'width', 'height'],
     components: {
       'trend-timeline': trendLine,
     },
@@ -42,6 +41,12 @@
         novelTrends: [],
         loading: false,
       };
+    },
+    computed: {
+      /* eslint no-bitwise: 0 */
+      trendLineWidth() {
+        return ~~(this.width / 3) - 30;
+      },
     },
     watch: {
       query() {
@@ -60,8 +65,8 @@
         axios.get(apiUrl)
           .then((resp) => {
             this.loading = false;
-            this.establishedTrends = resp.data.established_trends.slice(0, 5);
-            this.novelTrends = resp.data.novel_trends.slice(0, 5);
+            this.establishedTrends = resp.data.established_trends.slice(0, 10);
+            this.novelTrends = resp.data.novel_trends.slice(0, 10);
           });
       },
     },
