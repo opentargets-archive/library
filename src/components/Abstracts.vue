@@ -93,6 +93,10 @@
         this.acc = [];
         this.lastAbstract = '';
       },
+      query() {
+        this.acc = [];
+        this.lastAbstract = '';
+      },
       apiUrl() {
         this.loading = true;
         const apiUrl = this.apiUrl.split('#-#')[0];

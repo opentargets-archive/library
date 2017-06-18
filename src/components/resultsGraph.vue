@@ -1,6 +1,6 @@
 <template>
   <!-- Display the results -->
-  <div> <!-- root -->
+  <div class="topics-container"> <!-- root -->
     <!--<p class="tip" v-if="query">Graph for <b>{{query}}</b></p>-->
 
     <div class="page-spinner" v-show="showSpinner">
@@ -143,20 +143,26 @@
     }
   }
 
-  .topics-menu {
-    position:absolute;
-    right: 10px;
-    padding: 10px;
-    background: white;
+  .topics-container {
+    position: absolute;
 
-    >.topic-item {
-      margin-top: 5px;
-      padding: 5px;
+    .topics-menu {
+      position:absolute;
+      width: 150px;
+      font-size: 0.8em;
+      right: 10px;
+      padding: 10px;
+      background: white;
+
+      >.topic-item {
+        margin-top: 5px;
+        padding: 5px;
+        cursor: pointer;
+      }
+    }
+
+    #graphContainer {
       cursor: pointer;
     }
-  }
-
-  #graphContainer {
-    cursor: pointer;
   }
 </style>
