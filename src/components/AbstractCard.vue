@@ -1,8 +1,40 @@
 <template>
   <div> <!-- root -->
     <div>
-      <div class="paper-title">
-        <a class="epmc_citation_link" target=_blank :href="epmcLink">{{title}}</a>
+      <!-- Paper details -->
+      <q-modal class="minimized" ref="paperDetails" :content-css="{padding: '50px'}">
+        <h4>{{title}}</h4>
+        <div class="paper-authors">
+          <span class="paper-author">{{author}}</span>
+        </div>
+        <div class="paper-journal">
+          <span class="paper-journal-abbrev">{{journal}}</span>
+          <span class="paper-year">{{year}}</span>
+          <span class="paper-volume">{{volume}}</span>
+          <span class="paper-issue">{{issue}}</span>
+          <span class="paper-pages">{{pages}}</span>
+        </div>
+        <div class="paper-pmid">PMID: <a target=_blank href="epmcLink">{{pmid}}</a></div>
+
+        <!-- similar papers -->
+        <div>
+          <h4>Similar articles</h4>
+          <div v-show="loadingSimilarArticles"><i class="fa fa-spinner fa-spin"></i></div>
+          <div class="similar-paper" v-for="similarPaper in similar">
+            <h6><a :href="similarPaper.europePmcLink">{{similarPaper._source.title}}</a></h6>
+            <div>
+              <div class="paper-authors">
+                <span class="paper-author">{{similarPaper.refAuthors}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="primary" @click="$refs.paperDetails.close()">Ok</button>
+      </q-modal>
+      <!-- /Paper details -->
+
+      <div @click="openAbstract" class="paper-title">
+        <a class="epmc_citation_link">{{title}}</a>
       </div>
       <div class="paper-authors">
         <span class="paper-author">{{author}}</span>
@@ -37,6 +69,8 @@
 </template>
 
 <script>
+  import axios from 'axios';
+
   /* eslint no-underscore-dangle: 0 */
   export default {
     name: 'abstract-card',
@@ -44,9 +78,40 @@
     data() {
       return {
         showFull: false,
+        similar: [],
+        loadingSimilarArticles: false,
       };
     },
     methods: {
+      openAbstract() {
+        this.$refs.paperDetails.open();
+
+        this.loadingSimilarArticles = true;
+        const vueCtx = this;
+        const url = `https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/document-more-like-this/${this.abstract._id}`;
+        axios.get(url)
+          .then((resp) => {
+            /* eslint no-param-reassign: 0 */
+            vueCtx.loadingSimilarArticles = false;
+            this.similar = resp.data.hits.hits.map((p) => {
+              p.refAuthors = '';
+              if (p._source.authors && p._source.authors.length) {
+                const authorNames = this.abstract._source.authors.map((d) => d.short_name);
+                if (authorNames.length === 1) {
+                  p.refAuthors = authorNames[0];
+                }
+                else if (authorNames.length === 2) {
+                  p.refAuthors = authorNames.join(' and ');
+                }
+                else {
+                  p.refAuthors = `${authorNames.slice(0, authorNames.length - 1).join(', ')} and ${authorNames[authorNames.length - 1]}`;
+                }
+              }
+              p.europePmcLink = `//europepmc.org/abstract/med/${p._id}`;
+              return p;
+            });
+          });
+      },
       showMore() {
         this.showFull = true;
       },
@@ -73,9 +138,6 @@
           return authorNames.join(' and ');
         }
         return `${authorNames.slice(0, authorNames.length - 1).join(', ')} and ${authorNames[authorNames.length - 1]}`;
-      },
-      authors() {
-        return this.abstract._source.authors;
       },
       journal() {
         return this.abstract._source.journal.medlineAbbreviation;
@@ -136,6 +198,10 @@
     font-size: 0.8em;
     margin-top: 0.2em;
     margin-bottom: 0.2em;
+  }
+
+  .similar-paper {
+    margin-bottom: 20px;
   }
 
   .paper-abstract-short {
