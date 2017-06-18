@@ -45,8 +45,10 @@
           .width(w - 70)
           .height(h)
           .on('click', (d) => {
-            console.log('in search we received the clicked element...');
-            console.log(d);
+            this.$emit('addFilter', {
+              type: 'term',
+              term: d.data.key,
+            });
           });
         tmap(container);
       },

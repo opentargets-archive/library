@@ -3,6 +3,7 @@
 
     <!-- Search container -->
     <div class="search-container" @keyup.enter="doSearch">
+
       <div class="search-bar">
         <q-search v-model="inputQuery" icon='' class="primary blue" :debounce=10></q-search>
       </div>
@@ -16,80 +17,12 @@
       <!-- grid -->
       <div class="row gutter wrap justify-stretch">
 
-        <!-- left panel -->
-        <div class="width-1of2 filters-panel">
-
-          <filters :width="width" :height="height" :query="searchQuery"></filters>
-
-          <!--<q-tabs-->
-            <!--slot="navigation"-->
-            <!--:refs="$refs"-->
-            <!--default-tab="treemap"-->
-          <!--&gt;-->
-
-            <!--<q-tab name="treemap" icon="border_outer">Terms</q-tab>-->
-            <!--<q-tab name="dates" icon="date_range">Date range</q-tab>-->
-            <!--<q-tab name="trends" icon="trending_up">Trends</q-tab>-->
-            <!--<q-tab name="graph" icon="timeline">Graph</q-tab>-->
-          <!--</q-tabs>-->
-
-
-          <!--&lt;!&ndash; treemap tab &ndash;&gt;-->
-          <!--<div ref="treemap">-->
-            <!--<div>-->
-              <!--<facets :width="width" :height="height" :query="searchQuery"></facets>-->
-            <!--</div>-->
-          <!--</div>-->
-
-          <!--&lt;!&ndash; dates tab &ndash;&gt;-->
-          <!--<div ref="dates">-->
-            <!--Date range picker here-->
-          <!--</div>-->
-
-          <!--&lt;!&ndash; trends tab &ndash;&gt;-->
-          <!--<div ref="trends">-->
-            <!--<trends :query="query"></trends>-->
-          <!--</div>-->
-
-          <!--&lt;!&ndash; Graph is now a tab... &ndash;&gt;-->
-          <!--<div ref="graph">-->
-            <!--&lt;!&ndash; Add new entities &ndash;&gt;-->
-            <!--<entities-menu @fields="setFields"></entities-menu>-->
-
-            <!--&lt;!&ndash; Graph &ndash;&gt;-->
-            <!--<results-graph-->
-              <!--@selected="updateVertexSelection"-->
-              <!--@selectedTopic="updateTopic"-->
-              <!--:width="width"-->
-              <!--:height="height"-->
-              <!--:query="searchQuery"-->
-              <!--:fields="fields"-->
-              <!--:colors="colors"-->
-              <!--:unselect="unselect"-->
-            <!--&gt;</results-graph>-->
-          <!--</div>-->
-
-          <!--&lt;!&ndash; Card container showing clicked entities &ndash;&gt;-->
-          <!--<div>-->
-            <!--&lt;!&ndash;<q-transition name="slide">&ndash;&gt;-->
-            <!--<div class="responsive entity-card-container" v-show="selectedEntities.length">-->
-              <!--<div v-for="entity in selectedEntities">-->
-                <!--<entity-card-->
-                  <!--@removeEntity="removeSelection"-->
-                  <!--@addSearchTerm="addSearchTerm"-->
-                  <!--:entity="entity"-->
-                  <!--:colors="colors"-->
-                <!--&gt;</entity-card>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--&lt;!&ndash;</q-transition>&ndash;&gt;-->
-          <!--</div>-->
-
+        <div class="width-1of2 filters-panel">  <!-- left panel -->
+          <filters :width="width" :height="height" @addFilter="addFilter" :query="searchQuery"></filters>
         </div> <!-- /left panel -->
 
         <div class="width-1of2"> <!-- right panel -->
-          <!-- Abstracts table -->
-          <abstracts :query="searchQuery" :topic="selectedTopic" :entities="selectedEntities"></abstracts>
+          <abstracts @addFilterToSearch="addSearchTerm" @removeFilter="removeFilter" :query="searchQuery" :filters="filters"></abstracts>
         </div> <!-- /right panel -->
 
       </div> <!-- /grid -->
@@ -98,10 +31,7 @@
 </template>
 
 <script type="text/javascript">
-  // import entitiesMenu from './EntitiesMenu.vue';
   import abstracts from './Abstracts.vue';
-  // import resultsGraph from './resultsGraph.vue';
-  // import facets from './Facets.vue';
   import filters from './Filters.vue';
   import entityCard from './EntityCard.vue';
   import lucene from '../services/lucene';
@@ -110,64 +40,38 @@
     name: 'main',
     data() {
       return {
-        // colors: {},
-        // currFields: {},
-        // fields: {},
+        filters: [],
         height: '',
         width: '',
         inputQuery: '',
         searchQuery: '',
-        selectedEntities: [],
-        selectedTopic: {},
-        // unselect: [],
       };
     },
     components: {
-      // 'entities-menu': entitiesMenu,
       abstracts,
-      // 'results-graph': resultsGraph,
       'entity-card': entityCard,
-      // facets,
       filters,
     },
     mounted() {
       const container = this.$el.querySelector('.filters-panel');
       this.width = container.offsetWidth;
-      // this.height = container.offsetHeight;
       this.height = window.innerHeight - 100;
     },
     methods: {
-      removeSelection(who) {
-        this.unselect = [who];
+      removeFilter(who) {
+        this.filters = this.filters.filter((d) => d.term !== who.term);
+      },
+      addFilter(who) {
+        this.filters.push(who);
       },
       addSearchTerm(who) {
         const query = lucene.compose(this.searchQuery, [who]);
         this.inputQuery = query;
-        this.unselect = this.selectedEntities;
-        this.selectedEntities = [];
+        this.filters = [];
         this.doSearch();
       },
-//      updateTopic(topic) {
-//        if (topic) {
-//          this.selectedTopic = topic;
-//        }
-//        else {
-//          this.selectedTopic = undefined;
-//        }
-//      },
-//      updateVertexSelection(selected) {
-//        this.selectedEntities = selected;
-//      },
-//      setFields(data, colors) {
-//        const vueCtx = this;
-//        data.forEach((d) => {
-//          vueCtx.colors[d.field] = colors[d.field];
-//        });
-//        vueCtx.currFields = data;
-//      },
       doSearch() {
         this.searchQuery = this.inputQuery;
-        // this.fields = this.currFields;
       },
     },
   };

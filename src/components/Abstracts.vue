@@ -1,23 +1,31 @@
 <template>
   <div> <!-- root -->
-    <div>
-      <div class="responsive topic-card" v-show="topic.name">
-        Topic: {{topic.name}}
-      </div>
+
+    <div class="filters-container">
+      <filter-pill
+        v-for="(filter, index) in filters"
+        :key="index"
+        :filter="filter"
+        @removeFilter="removeFilter"
+        @addFilterToSearch="addFilterToSearch"
+      >
+      </filter-pill>
     </div>
 
-    <div v-show="totalAbstracts" class="table-container">
+    <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
+
+    <div v-show="totalAbstracts==0 && !loading" class="total-abstracts">
+      There are no abstracts matching your query and filters
+    </div>
+
+    <div v-show="acc.length" class="table-container">
       <div class="total-abstracts">
-        Total abstracts: {{totalAbstracts}}
+        Showing {{acc.length}} abstracts of {{totalAbstracts}} matching your query and filters
       </div>
-      <vuetable ref="vuetable"
-                :load-on-start="loadOnStart"
-                :query-params="queryParams"
-                :api-url="apiUrl"
-                :fields="fields"
-                :per-page= "perPage"
-                data-path="hits.hits"
-      ></vuetable>
+
+      <div class="abstract-card" v-for="abstract in acc">
+        <abstract-card :abstract="abstract"></abstract-card>
+      </div>
 
       <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="30" infinite-scroll-immediate-check=false>
         <div v-show="moreToLoad" class="spinner-container">
@@ -30,62 +38,48 @@
 </template>
 
 <script>
-  import Vuetable from 'vuetable-2/src/components/Vuetable.vue';
+  import axios from 'axios';
   import infiniteScroll from 'vue-infinite-scroll';
-//  import MugenScroll from 'vue-mugen-scroll';
+  import AbstractCard from './AbstractCard.vue';
+  import FilterPill from './FilterPill.vue';
   import lucene from '../services/lucene';
+
 
   const apiBaseUrl = 'https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/search';
 
   export default {
     components: {
-      Vuetable,
+      'abstract-card': AbstractCard,
+      'filter-pill': FilterPill,
     },
     directives: {
       infiniteScroll,
     },
     computed: {
       apiUrl() {
-        const query = lucene.compose2(this.query, this.topic, this.entities);
+        /* eslint no-underscore-dangle: 0 */
+        /* eslint no-unused-expressions: 0 */
+        const query = lucene.compose3(this.query, this.filters);
         let search = `query=${query}`;
-        if (this.page) {
-          search = `${search}&search_after=${this.page}`;
+        if (this.lastAbstract) {
+          search = `${search}&search_after=${this.lastAbstract.sort[0]}&search_after_id=${this.lastAbstract._id}`;
         }
-//        return `${apiBaseUrl}?query=${query}`;
         const url = `${apiBaseUrl}?${search}`;
         console.log(`new url... ${url}`);
-        return url;
+        this.counter += 1;
+        return `${url}#-#${this.counter}`;
       },
     },
     data() {
       return {
+        abstracts: [],
         loading: false,
-        totalAbstracts: 0,
+        totalAbstracts: -1, // to allow for 0 abstracts
         perPage: 10,
-        page: '',
+        lastAbstract: '',
         acc: [],
+        counter: 0,
         moreToLoad: true,
-        fields: [
-          {
-            name: '_source.authors',
-            title: 'Authors',
-            callback: this.authorsCbak,
-          },
-          {
-            name: '_source.journal.medlineAbbreviation',
-            title: 'Journal',
-          },
-          {
-            name: '_source',
-            title: 'Abstract',
-            callback: this.abstractCbak,
-          },
-          {
-            name: '_source.pub_date',
-            title: 'Date',
-          },
-        ],
-        loadOnStart: false,
         queryParams: {
           sort: 'sort',
           page: 'from', // it should be search_after, but only when it has to be present. So by default we keep it as 'from' which is ignored by the api
@@ -93,56 +87,47 @@
         },
       };
     },
-    props: ['query', 'entities', 'topic'],
+    props: ['query', 'filters'],
+    watch: {
+      filters() {
+        this.acc = [];
+        this.lastAbstract = '';
+      },
+      apiUrl() {
+        this.loading = true;
+        const apiUrl = this.apiUrl.split('#-#')[0];
+        axios.get(apiUrl)
+          .then((resp) => {
+            this.loading = false;
+            const data = resp.data.hits;
+            this.abstracts = data.hits;
+            this.acc = [...this.acc, ...this.abstracts];
+            this.totalAbstracts = data.total;
+
+            // Show or hide the spinner depending on the number of abstracts to load
+            if (this.totalAbstracts > this.acc.length) {
+              this.moreToLoad = true;
+            }
+            else {
+              this.moreToLoad = false;
+            }
+          });
+      },
+    },
     methods: {
-      transform(data) {
-        /* eslint no-param-reassign: 0 */
-
-        // get the number of records;
-        // buffer the current entries in 'acc'
-        this.acc = [...this.acc, ...data.hits.hits];
-        data.hits.hits = this.acc;
-
-        this.totalAbstracts = data.hits.total;
-
-        // Show or hide the spinner depending on the number of abstracts to load
-        if (this.totalAbstracts > this.acc.length) {
-          this.moreToLoad = true;
-        }
-        else {
-          this.moreToLoad = false;
-        }
-
-        return data;
+      addFilterToSearch(who) {
+        // relay, why it is not propagated up?
+        this.$emit('addFilterToSearch', who);
+      },
+      removeFilter(who) {
+        this.$emit('removeFilter', who);
       },
 
       // fetch data is here to work with the infinite scrolling (not working for now)
       loadMore() {
-//        this.loading = true;
-//        this.loading = false;
-
-        if (this.moreToLoad) {
-          this.page = this.acc[this.acc.length - 1].sort.join('-');
-        }
-
-        // this.$refs.vuetable.refresh();
-        // this.$refs.vuetable.gotoPage(page);
+        this.lastAbstract = this.acc[this.acc.length - 1];
       },
 
-      abstractCbak(info) {
-        const html = `<h6>${info.title}</h6><div>${info.abstract}</div>`;
-        return html;
-      },
-
-      authorsCbak(authorsArr) {
-        if (authorsArr.length === 1) {
-          return authorsArr[0].full_name;
-        }
-        if (authorsArr.length === 2) {
-          return `${authorsArr[0].full_name} and ${authorsArr[1].full_name}`;
-        }
-        return `${authorsArr[0].full_name} et al`;
-      },
     },
   };
 
@@ -154,43 +139,19 @@
     width: 10%;
     margin-left: auto;
     margin-right: auto;
-    font-size: 3em;
+    font-size: 2em;
   }
 
-  .table-container {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
-    font-size: 0.8em;
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-
-    >.total-abstracts {
-      margin-left:20px;
-    }
-
-    > table {
-      td {
-        padding: 20px;
-        vertical-align: top;
-      }
-      border-spacing: 0px 20px;
-      .vuetable-th-_source\.authors {
-        width: 10%;
-      }
-      .vuetable-th-_source\.journal {
-        width: 10%;
-      }
-      .vuetable-th-_source\.abstract {
-        width: 70%;
-      }
-      .vuetable-th-_source\.pub_date {
-        width: 10%;
-      }
-    }
+  .abstract-card {
+    margin-top: 30px;
   }
 
+  .total-abstracts {
+    font-size: 0.7em;
+  }
+
+  .filters-container {
+    margin-bottom: 5px;
+  }
 
 </style>

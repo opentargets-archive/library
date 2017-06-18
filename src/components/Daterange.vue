@@ -16,7 +16,7 @@
     </div>
 
     <div>
-      <button class="primary">
+      <button class="primary" @click="applyDateRange">
         Apply <i class="on-right">done</i>
       </button>
     </div>
@@ -49,6 +49,12 @@
       };
     },
     methods: {
+      applyDateRange() {
+        this.$emit('addFilter', {
+          type: 'date',
+          term: `${this.yearSelection.min}-${this.yearSelection.max}`,
+        });
+      },
       fillColor(d) {
         if ((d.year >= this.yearSelection.min) && (d.year <= this.yearSelection.max)) {
           return this.darkColor;
@@ -66,13 +72,14 @@
         return ~~((this.width - (this.width * 0.8)) / 2) - 20;
       },
       minimalRange() {
-        const range = dropWhile(this.data, (d, i) => (d.doc_count === 0 || i === 0));
-        const rangeWithYear = range.map((d) => {
+        const rangeWithYear = this.data.map((d) => {
           /* eslint no-param-reassign: 0 */
           d.year = new Date(d.key).getFullYear();
           return d;
         });
-        return rangeWithYear;
+
+        const range = dropWhile(rangeWithYear, (d) => (d.doc_count === 0) || d.year === 1800);
+        return range;
       },
     },
     watch: {
@@ -81,6 +88,11 @@
           .attr('fill', this.fillColor);
       },
       data() {
+        /* eslint max-len: 0 */
+        // clean prev version of the date range selection
+        const container = document.getElementById('date-range-histogram');
+        container.innerHTML = '';
+
         this.minYear = minBy(this.minimalRange, (y) => y.year).year;
         this.maxYear = maxBy(this.minimalRange, (y) => y.year).year;
         this.yearSelection.min = this.minYear;
@@ -88,15 +100,17 @@
 
         // build the histogram (bar plot) for the date range...
         const margin = 100;
-        let histWidth = this.usedWidth - 30;
+        let histWidth = this.usedWidth;
         const xScale = d3.scaleLinear()
-          .domain([this.minYear, this.maxYear + 1])
+          .domain([this.minYear, this.maxYear])
           .range([0, histWidth]);
 
-        histWidth = (this.usedWidth - 30) + (xScale(this.maxYear) - xScale(this.maxYear - 1));
+        const barWidth = xScale(this.maxYear) - xScale(this.maxYear - 1);
+        // histWidth = (this.usedWidth - 30) + ((xScale(this.maxYear) - xScale(this.maxYear - 1)) / 2);
+        histWidth = (this.usedWidth - 40);
         xScale.range([0, histWidth]);
 
-        const countsExtent = d3.extent(this.minimalRange, (d) => d.doc_count);
+        const countsExtent = [0, d3.max(this.minimalRange, (d) => d.doc_count)];
         const yScale = d3.scaleLinear()
           .domain(countsExtent)
           .range([0, height]);
@@ -106,7 +120,7 @@
           .attr('width', histWidth + margin)
           .attr('height', height + margin)
           .append('g')
-          .attr('transform', `translate(${margin / 2},${margin})`);
+          .attr('transform', `translate(${((margin / 2) + 15) - (barWidth / 2)},${margin})`);
 
         const bars = this.svg.selectAll('.counts-bar')
           .data(this.minimalRange)

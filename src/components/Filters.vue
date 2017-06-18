@@ -8,29 +8,31 @@
       default-tab="treemap"
     >
 
-      <q-tab name="treemap" icon="border_outer">Terms</q-tab>
-      <q-tab name="dates" icon="date_range">Date range</q-tab>
-      <q-tab name="trends" icon="trending_up">Trends</q-tab>
-      <q-tab name="graph" icon="timeline">Topics</q-tab>
+      <q-tab class="filter-label" name="treemap" :style="{background: colors.term}" icon="view_quilt">Terms</q-tab>
+      <q-tab class="filter-label" name="dates" :style="{background: colors.date}" icon="date_range">Date range</q-tab>
+      <q-tab class="filter-label" name="trends" :style="{background: colors.trend}" icon="trending_up">Trends</q-tab>
+      <q-tab class="filter-label" name="graph" :style="{background: colors.topic}" icon="border_outer">Topics</q-tab>
     </q-tabs>
 
 
     <!-- treemap tab -->
     <div class="filter-tab" ref="treemap">
       <div>
-        <treemap :width="width" :height="height" :chunks="topChunks" :loading="loading"></treemap>
+        <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
+        <treemap @addFilter="newFilter" :width="width" :height="height" :chunks="topChunks" :loading="loading"></treemap>
         <!--<facets :width="width" :height="height" :query="query"></facets>-->
       </div>
     </div>
 
     <!-- dates tab -->
     <div class="filter-tab" ref="dates">
-      <date-range :data="dateHistogram" :width="width"></date-range>
+      <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
+      <date-range @addFilter="newFilter" :data="dateHistogram" :width="width"></date-range>
     </div>
 
     <!-- trends tab -->
     <div class="filter-tab" ref="trends">
-      <trends :query="query" :width="width" :height="height"></trends>
+      <trends @addFilter="newFilter" :query="query" :width="width" :height="height"></trends>
     </div>
 
     <!-- Graph is now a tab... -->
@@ -74,6 +76,8 @@
   import dateRange from './Daterange.vue';
   import trends from './Trends.vue';
   import resultsGraph from './resultsGraph.vue';
+  import pillColors from '../services/pillColors';
+
 
   export default {
     name: 'filters',
@@ -86,6 +90,7 @@
     },
     data() {
       return {
+        colors: pillColors,
         topChunks: [],
         dateHistogram: [],
         loading: false,
@@ -98,13 +103,12 @@
       },
     },
     watch: {
-      width() {
-        console.log(`in filters width is ${this.width}`);
-      },
       apiUrl() {
         this.loading = true;
         axios.get(this.apiUrl)
           .then((resp) => {
+            console.log('response for filters...');
+            console.log(resp.data.aggregations);
             this.loading = false;
             this.topChunks = resp.data.aggregations.top_chunks_significant_terms.buckets;
             this.dateHistogram = resp.data.aggregations.pub_date_histogram.buckets;
@@ -112,6 +116,9 @@
       },
     },
     methods: {
+      newFilter(who) {
+        this.$emit('addFilter', who);
+      },
       updateTopic(topic) {
         if (topic) {
           this.selectedTopic = topic;
@@ -132,5 +139,8 @@
     margin-left: 20px;
     margin-right: 20px;
     margin-top:10px;
+  }
+  .filter-label {
+    color: black;
   }
 </style>
