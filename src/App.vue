@@ -31,4 +31,8 @@
     width:100%;
   }
 
+  .version {
+    font-size: 0.7em;
+  }
+
 </style>

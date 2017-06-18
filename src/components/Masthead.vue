@@ -1,7 +1,7 @@
 <template>
   <div class="toolbar">
     <q-toolbar-title :padding="1">
-      OpenTargets Search v{{version}}
+      OpenTargets Search <span class="version">v{{version}}</span>
     </q-toolbar-title>
   </div>
 </template>

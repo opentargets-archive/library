@@ -1,7 +1,7 @@
 <template>
   <div class="toolbar">
     <q-toolbar-title :padding="1">
-      OpenTargets Search v{{version}} -- Footer
+      OpenTargets Search <span class="version">v{{version}}</span>
     </q-toolbar-title>
     <div class="right-items">
       <a href="https://github.com/opentargets/search" class="text-white">

@@ -14,7 +14,7 @@
           <span class="paper-issue">{{issue}}</span>
           <span class="paper-pages">{{pages}}</span>
         </div>
-        <div class="paper-pmid">PMID: <a target=_blank href="epmcLink">{{pmid}}</a></div>
+        <div class="paper-pmid">PMID: <a target=_blank :href="epmcLink">{{pmid}}</a></div>
 
         <!-- similar papers -->
         <div>
