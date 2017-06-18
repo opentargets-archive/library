@@ -21,7 +21,7 @@
           <h4>Similar articles</h4>
           <div v-show="loadingSimilarArticles"><i class="fa fa-spinner fa-spin"></i></div>
           <div class="similar-paper" v-for="similarPaper in similar">
-            <h6><a :href="similarPaper.europePmcLink">{{similarPaper._source.title}}</a></h6>
+            <h6><a target=_blank :href="similarPaper.europePmcLink">{{similarPaper._source.title}}</a></h6>
             <div>
               <div class="paper-authors">
                 <span class="paper-author">{{similarPaper.refAuthors}}</span>
