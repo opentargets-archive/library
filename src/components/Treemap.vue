@@ -1,6 +1,17 @@
 <template>
-  <div>
-    <div id="resultsTreemap"></div>
+  <div> <!-- Root -->
+
+    <div>
+      <q-select
+        type="radio"
+        v-model="selectedAgg"
+        :options="treemapSelect"
+      ></q-select>
+      <div>
+        <div id="resultsTreemap"></div>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -11,13 +22,45 @@
 
   export default {
     name: 'treemap',
-    props: ['chunks', 'width', 'height', 'loading'],
+    props: ['aggs', 'width', 'height', 'loading'],
+    data() {
+      return {
+        selectedAgg: 'terms',
+        treemapSelect: [
+          {
+            label: 'Frequent terms',
+            value: 'terms',
+          },
+          {
+            label: 'Curated keywords',
+            value: 'keywords',
+          },
+          {
+            label: 'Mesh terms',
+            value: 'mesh_terms',
+          },
+          {
+            label: 'Chemicals',
+            value: 'chemicals',
+          },
+          {
+            label: 'Journals',
+            value: 'journals',
+          },
+          {
+            label: 'Authors',
+            value: 'authors',
+          },
+        ],
+      };
+    },
     computed: {
       dataAndDims() {
         /* eslint no-unused-expressions: 0 */
         this.width;
         this.height;
-        this.chunks;
+        this.aggs;
+        this.selectedAgg;
         return Date.now();
       },
     },
@@ -30,10 +73,18 @@
         }
       },
       dataAndDims() {
-        if (!this.chunks.length || !this.width || !this.height) {
+        if (!this.aggs || !Object.keys(this.aggs).length || !this.width || !this.height) {
           return;
         }
-        const hierarchy = chunks2hierarchy(this.chunks);
+        document.getElementById('resultsTreemap').innerHTML = '';
+
+        console.log('calling chunks2hierarchy...');
+        console.log(this.aggs);
+        console.log(this.selectedAgg);
+        console.log(this.aggs[this.selectedAgg]);
+        const hierarchy = chunks2hierarchy(this.aggs[this.selectedAgg]);
+        console.log('hierarchy...');
+        console.log(hierarchy);
 
         const w = this.width;
         const h = this.height;
