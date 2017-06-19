@@ -8,6 +8,7 @@
         :filter="filter"
         @removeFilter="removeFilter"
         @addFilterToSearch="addFilterToSearch"
+        @setFilterAsQuery="setFilterAsQuery"
       >
       </filter-pill>
     </div>
@@ -125,6 +126,9 @@
       },
       removeFilter(who) {
         this.$emit('removeFilter', who);
+      },
+      setFilterAsQuery(who) {
+        this.$emit('setFilterAsQuery', who);
       },
 
       // fetch data is here to work with the infinite scrolling (not working for now)

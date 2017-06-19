@@ -18,11 +18,24 @@
       <div class="row gutter wrap justify-stretch">
 
         <div class="width-1of2 filters-panel">  <!-- left panel -->
-          <filters :width="width" :height="height" @addFilter="addFilter" :query="searchQuery"></filters>
+          <filters
+            :width="width"
+            :height="height"
+            @addFilter="addFilter"
+            @removeFilterPill="removeFilterPill"
+            :query="searchQuery"
+            :removedFilter="removedFilter"
+          ></filters>
         </div> <!-- /left panel -->
 
         <div class="width-1of2"> <!-- right panel -->
-          <abstracts @addFilterToSearch="addSearchTerm" @removeFilter="removeFilter" :query="searchQuery" :filters="filters"></abstracts>
+          <abstracts
+            @addFilterToSearch="addSearchTerm"
+            @removeFilter="removeFilter"
+            @setFilterAsQuery="setFilterAsQuery"
+            :query="searchQuery"
+            :filters="filters"
+          ></abstracts>
         </div> <!-- /right panel -->
 
       </div> <!-- /grid -->
@@ -40,6 +53,7 @@
     name: 'main',
     data() {
       return {
+        removedFilter: '',
         filters: [],
         height: '',
         width: '',
@@ -58,8 +72,13 @@
       this.height = window.innerHeight - 100;
     },
     methods: {
-      removeFilter(who) {
+      removeFilterPill(who) {
         this.filters = this.filters.filter((d) => d.term !== who.term);
+      },
+      removeFilter(who) {
+        // this.filters = this.filters.filter((d) => d.term !== who.term);
+        this.removeFilterPill(who);
+        this.removedFilter = who;
       },
       addFilter(who) {
         this.filters.push(who);
@@ -67,6 +86,11 @@
       addSearchTerm(who) {
         const query = lucene.compose(this.searchQuery, [who]);
         this.inputQuery = query;
+        this.filters = [];
+        this.doSearch();
+      },
+      setFilterAsQuery(who) {
+        this.inputQuery = who.luceneQuery;
         this.filters = [];
         this.doSearch();
       },

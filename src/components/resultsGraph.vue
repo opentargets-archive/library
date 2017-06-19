@@ -3,12 +3,12 @@
   <div class="topics-container"> <!-- root -->
     <!--<p class="tip" v-if="query">Graph for <b>{{query}}</b></p>-->
 
-    <div class="page-spinner" v-show="showSpinner">
-      <i class="fa fa-spinner fa-2x fa-spin message" aria-hidden="true"></i>
+    <div v-show="showSpinner">
+      <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
     </div>
 
 
-    <div class="topics-menu">
+    <div v-show="!showSpinner" class="topics-menu">
       <div v-for="topic in topics" :style="{'background-color': topic.color, 'opacity':'0.8'}" class="topic-item" @click="selectTopic(topic);">
         {{topic.name}} -- {{topic.vertices.length}}
       </div>
@@ -34,11 +34,9 @@
     name: 'results-graph',
     props: [
       'query',
-      // 'fields',
-      // 'colors',
-      // 'unselect', // Programmatic unselection of nodes, expects and array of nodes to unselect
       'width',
       'height',
+      'removedFilter',
     ],
     data() {
       return {
@@ -67,11 +65,16 @@
       },
     },
     watch: {
-      unselect() {
-        this.unselect.forEach((n) => {
-          graph.select(n);
-        });
-        // graph.select(this.unselect);
+//      unselect() {
+//        this.unselect.forEach((n) => {
+//          graph.select(n);
+//        });
+//        // graph.select(this.unselect);
+//      },
+      removedFilter(f) {
+        if (f.type === 'topic') {
+          graph.unselect(graph.getVertexByTerm(f.term));
+        }
       },
       compoundProperty() {
         const vueCtx = this;
@@ -108,24 +111,30 @@
           vueCtx.topics = topics.slice(0, 12);
         });
         graph.on('failed', () => {
+          console.log('the graph did not load... :-(');
           vueCtx.showFailed = true;
           vueCtx.showSpinner = false;
         });
         graph.on('selected', (v) => {
-          this.$emit('selected', v.selected);
+          this.$emit('addFilter', {
+            type: 'topic',
+            term: v.subject.term,
+            node: v.subject,
+          });
         });
         graph.on('unselected', (v) => {
-          this.$emit('selected', v.selected);
+          // this.$emit('selected', v.selected);
+          this.$emit('removeFilter', {
+            type: 'topic',
+            term: v.subject.term,
+            node: v.subject,
+          });
         });
         graph.on('topicSelected', (t) => {
-          console.log('topic selected!');
-          console.log(t);
           this.$emit('selectedTopic', t);
         });
         graph.on('topicUnselected', (t) => {
-          console.log('topic unselected!');
-          console.log(t);
-          this.$emit('selectedTopic');
+          this.$emit('selectedTopic', t);
         });
       },
     },
@@ -133,15 +142,6 @@
 </script>
 
 <style lang="scss">
-  .page-spinner {
-    width: 10%;
-    height: 300px;
-    margin-left: auto;
-    margin-right: auto;
-    >.message {
-      margin-top:150px;
-    }
-  }
 
   .topics-container {
     position: absolute;

@@ -42,30 +42,19 @@
 
       <!-- Graph -->
       <results-graph
-        @selected="updateVertexSelection"
-        @selectedTopic="updateTopic"
+        @addFilter="newFilter"
+        @removeFilter="removeFilter"
         :width="width"
         :height="height"
         :query="query"
+        :removedFilter="removedFilter"
       ></results-graph>
+        <!--@selected="updateVertexSelection"-->
+        <!--@selectedTopic="updateTopic"-->
         <!--:fields="fields"-->
         <!--:colors="colors"-->
         <!--:unselect="unselect"-->
     </div>
-
-    <!-- Card container showing clicked entities -->
-    <!--<div>-->
-      <!--<div class="responsive entity-card-container" v-show="selectedEntities.length">-->
-        <!--<div v-for="entity in selectedEntities">-->
-          <!--<entity-card-->
-            <!--@removeEntity="removeSelection"-->
-            <!--@addSearchTerm="addSearchTerm"-->
-            <!--:entity="entity"-->
-            <!--:colors="colors"-->
-          <!--&gt;</entity-card>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
 
   </div>
 </template>
@@ -81,7 +70,7 @@
 
   export default {
     name: 'filters',
-    props: ['width', 'height', 'query'],
+    props: ['width', 'height', 'query', 'removedFilter'],
     components: {
       treemap,
       'date-range': dateRange,
@@ -107,8 +96,6 @@
         this.loading = true;
         axios.get(this.apiUrl)
           .then((resp) => {
-            console.log('response for filters...');
-            console.log(resp.data.aggregations);
             this.loading = false;
             this.topChunks = resp.data.aggregations.top_chunks_significant_terms.buckets;
             this.dateHistogram = resp.data.aggregations.pub_date_histogram.buckets;
@@ -119,17 +106,20 @@
       newFilter(who) {
         this.$emit('addFilter', who);
       },
-      updateTopic(topic) {
-        if (topic) {
-          this.selectedTopic = topic;
-        }
-        else {
-          this.selectedTopic = undefined;
-        }
+      removeFilter(who) {
+        this.$emit('removeFilterPill', who);
       },
-      updateVertexSelection(selected) {
-        this.selectedEntities = selected;
-      },
+//      updateTopic(topic) {
+//        if (topic) {
+//          this.selectedTopic = topic;
+//        }
+//        else {
+//          this.selectedTopic = undefined;
+//        }
+//      },
+//      updateVertexSelection(selected) {
+//        this.selectedEntities = selected;
+//      },
     },
   };
 </script>
