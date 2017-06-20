@@ -25,7 +25,11 @@
       </div>
 
       <div class="abstract-card" v-for="abstract in acc">
-        <abstract-card :abstract="abstract"></abstract-card>
+        <abstract-card
+          @addSelectionToQuery="addFilterToSearch"
+          @setFilterAsQuery="setFilterAsQuery"
+          :abstract="abstract"
+        ></abstract-card>
       </div>
 
       <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="30" infinite-scroll-immediate-check=false>

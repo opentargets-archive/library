@@ -1,7 +1,7 @@
 <template>
   <div> <!-- root -->
     <div>
-      <!-- Paper details -->
+      <!-- Paper details in a modal -->
       <q-modal class="minimized" ref="paperDetails" :content-css="{padding: '50px'}">
         <h4>{{title}}</h4>
         <div class="paper-authors">
@@ -58,8 +58,48 @@
       </div>
 
       <div v-show="showFull">
-        <div class="paper-abstract-full">
+        <div @contextmenu="selectWord" class="paper-abstract-full">
           Abstract: {{abstractText}}
+          <q-context-menu ref="selectedWord">
+            <div class="selectedWordTitle">
+              {{selectedWord}}
+              <span class="action-item remove" @click="$refs.selectedWord.close();$refs.selectedWordDiscard.close()">
+                <i class="fa fa-remove">
+                  <q-tooltip
+                    ref="selectedWordDiscard"
+                    anchor="center right"
+                    self="center left"
+                    :offset="[10, 0]"
+                  > Discard this selection
+                  </q-tooltip>
+                </i>
+              </span>
+
+              <span class="action-item search" @click="addSelectionToQuery">
+                <i class="fa fa-search-plus">
+                  <q-tooltip
+                    anchor="center right"
+                    self="center left"
+                    :offset="[10, 0]"
+                  >Add selected text to the search query
+                  </q-tooltip>
+                </i>
+              </span>
+
+              <span class="action-item search" @click="setSelectionAsQuery">
+                <i class="fa fa-search">
+                  <q-tooltip
+                    anchor="center right"
+                    self="center left"
+                    :offset="[10, 0]"
+                  >Search for this text
+                  </q-tooltip>
+                </i>
+              </span>
+            </div>
+            <!--<button @click="addWordToQuery" class="primary">Add to Query</button>-->
+            <!--<button @click="$refs.context.close()" class="secondary">Discard</button>-->
+          </q-context-menu>
         </div>
         <div class="paper-show-more-or-less"><span @click="showLess()">[Show less]</span></div>
       </div>
@@ -80,9 +120,24 @@
         showFull: false,
         similar: [],
         loadingSimilarArticles: false,
+        selectedWord: '',
       };
     },
     methods: {
+      setSelectionAsQuery() {
+        this.$emit('setFilterAsQuery', {
+          luceneQuery: this.selectedWord,
+        });
+      },
+      addSelectionToQuery() {
+        this.$emit('addSelectionToQuery', {
+          luceneQuery: this.selectedWord,
+        });
+      },
+      selectWord() {
+        const selection = window.getSelection();
+        this.selectedWord = selection.toString();
+      },
       openAbstract() {
         this.$refs.paperDetails.open();
 
@@ -218,5 +273,33 @@
       rgba(255, 255, 255, 0) 90%
     );
     pointer-events: none; /* so the text is still selectable */
+  }
+  .selectedWordTitle {
+    padding: 5px;
+    background: #dddddd;
+    vertical-align: baseline;
+    .actions {
+      top: 2px;
+      right: 0px;
+      padding-left: 5px;
+      display: inline-block;
+      vertical-align: baseline;
+      > .action-item {
+        padding-right: 1px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        cursor: pointer;
+        > i {
+          vertical-align: baseline;
+        }
+        /*&.search {*/
+          /*background-color: #64b5f7;*/
+        /*}*/
+        /*&.remove {*/
+          /*background-color: orange;*/
+        /*}*/
+      }
+  }
+
   }
 </style>

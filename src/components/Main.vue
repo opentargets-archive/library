@@ -86,15 +86,16 @@
       addSearchTerm(who) {
         const query = lucene.compose(this.searchQuery, [who]);
         this.inputQuery = query;
-        this.filters = [];
+        // this.filters = [];
         this.doSearch();
       },
       setFilterAsQuery(who) {
         this.inputQuery = who.luceneQuery;
-        this.filters = [];
+        // this.filters = [];
         this.doSearch();
       },
       doSearch() {
+        this.filters = [];
         this.searchQuery = this.inputQuery;
       },
     },
