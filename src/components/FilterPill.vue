@@ -14,7 +14,7 @@
       </span>
 
       <span class="action-item search" @click="addFilterToSearch">
-        <i class="fa fa-plus">
+        <i class="fa fa-search-plus">
           <q-tooltip
             anchor="center right"
             self="center left"
