@@ -27,7 +27,7 @@
     <!-- dates tab -->
     <div class="filter-tab" ref="dates">
       <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
-      <date-range @addFilter="newFilter" :data="dateHistogram" :width="width"></date-range>
+      <date-range @addFilter="newFilter" :data="dateHistogram" :width="width" :loading="loading"></date-range>
     </div>
 
     <!-- trends tab -->

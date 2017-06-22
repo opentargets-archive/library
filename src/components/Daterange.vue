@@ -1,24 +1,27 @@
 <template>
   <div> <!-- Root -->
-    <div class="row gutter justify-stretch content-center text-center">
-      <div v-bind:style="{ 'margin-left': margin + 'px', width: usedWidth + 'px' }" class="date-range-container">
-        <div id="date-range-histogram"></div>
-        <div class="date-range">
-          <q-double-range
-            v-model="yearSelection"
-            :min="minYear"
-            :max="maxYear"
-            :snap="snap"
-            :labelAlways="label"
-          ></q-double-range>
+    <div v-show="!loading && svg">
+      <div class="row gutter justify-stretch content-center text-center">
+        <div v-bind:style="{ 'margin-left': margin + 'px', width: usedWidth + 'px' }" class="date-range-container">
+          <div id="date-range-histogram"></div>
+          <div class="date-range">
+            <q-double-range
+              v-model="yearSelection"
+              :min="minYear"
+              :max="maxYear"
+              :snap="snap"
+              :labelAlways="label"
+            ></q-double-range>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div>
-      <button class="primary" @click="applyDateRange">
-        Apply <i class="on-right">done</i>
-      </button>
+      <div>
+        <button class="primary" @click="applyDateRange">
+          Apply <i class="on-right">done</i>
+        </button>
+      </div>
+
     </div>
 
   </div> <!-- /Root -->
@@ -32,7 +35,7 @@
 
   export default {
     name: 'date-range',
-    props: ['data', 'width'],
+    props: ['data', 'width', 'loading'],
     data() {
       return {
         svg: undefined,
