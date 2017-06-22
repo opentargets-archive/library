@@ -1,13 +1,13 @@
 <template>
   <div> <!-- Root -->
 
-    <div>
+    <div v-show="dataIsPresent">
       <q-select
         type="radio"
         v-model="selectedAgg"
         :options="treemapSelect"
       ></q-select>
-      <div>
+      <div class="card-container">
         <div id="resultsTreemap"></div>
       </div>
 
@@ -25,6 +25,7 @@
     props: ['aggs', 'width', 'height', 'loading'],
     data() {
       return {
+        dataIsPresent: false,
         selectedAgg: 'terms',
         treemapSelect: [
           {
@@ -76,15 +77,10 @@
         if (!this.aggs || !Object.keys(this.aggs).length || !this.width || !this.height) {
           return;
         }
+        this.dataIsPresent = true;
         document.getElementById('resultsTreemap').innerHTML = '';
 
-        console.log('calling chunks2hierarchy...');
-        console.log(this.aggs);
-        console.log(this.selectedAgg);
-        console.log(this.aggs[this.selectedAgg]);
         const hierarchy = chunks2hierarchy(this.aggs[this.selectedAgg]);
-        console.log('hierarchy...');
-        console.log(hierarchy);
 
         const w = this.width;
         const h = this.height;
@@ -93,7 +89,7 @@
         // Build a new treemap... (or update an existing treemap??)
         const tmap = otsTreemap()
           .data(hierarchy)
-          .width(w - 70)
+          .width(w - 100)
           .height(h)
           .on('click', (d) => {
             this.$emit('addFilter', {

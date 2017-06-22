@@ -25,7 +25,7 @@
       </div>
 
       <div class="abstracts-container">
-        <div class="abstract-card" v-for="abstract in acc">
+        <div class="card-container" v-for="abstract in acc">
           <abstract-card
             @addSelectionToQuery="addFilterToSearch"
             @setFilterAsQuery="setFilterAsQuery"
@@ -164,20 +164,18 @@
     font-size: 2em;
   }
 
-  .abstract-card {
-    margin-top: 20px;
-    padding: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 10px 10px 5px #888888;
-    -webkit-box-shadow: 10px 10px 5px #888888;
-    -moz--webkit-box-shadow: 10px 10px 5px #888888;
-    border: 1px #888888;
-    border-style: solid;
-    background: #ffffff;
-
-
-  }
+  /*.abstract-card {*/
+    /*margin-top: 20px;*/
+    /*padding: 10px;*/
+    /*padding: 10px;*/
+    /*border-radius: 5px;*/
+    /*box-shadow: 10px 10px 5px #888888;*/
+    /*-webkit-box-shadow: 10px 10px 5px #888888;*/
+    /*-moz--webkit-box-shadow: 10px 10px 5px #888888;*/
+    /*border: 1px #888888;*/
+    /*border-style: solid;*/
+    /*background: #ffffff;*/
+  /*}*/
 
   .total-abstracts {
     font-size: 0.7em;

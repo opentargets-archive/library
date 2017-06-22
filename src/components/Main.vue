@@ -138,4 +138,17 @@
     border-style: solid;
     box-shadow: 5px 5px 2px #888888;
   }
+
+  .card-container {
+    margin-top: 20px;
+    padding: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 10px 10px 5px #888888;
+    -webkit-box-shadow: 10px 10px 5px #888888;
+    -moz--webkit-box-shadow: 10px 10px 5px #888888;
+    border: 1px #888888;
+    border-style: solid;
+    background: #ffffff;
+  }
 </style>

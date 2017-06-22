@@ -9,7 +9,12 @@
       <div v-show="establishedTrends.length" class="width-1of2">
         <span class="trend-category-title">Established trends</span>
         <div @click="selectTrend(trend)" class="trend-block" v-for="(trend, index) in establishedTrends">
-          <trend-timeline :width="trendLineWidth" :height="height" :trend="trend" :last="index==establishedTrends.length-1"></trend-timeline>
+          <div class="card-container">
+            <trend-timeline :width="trendLineWidth"
+                            :height="height" :trend="trend"
+                            last="true"
+            ></trend-timeline>
+          </div>
         </div>
       </div>
 
@@ -17,7 +22,11 @@
       <div v-show="novelTrends.length" class="width-1of2">
         <span class="trend-category-title">Novel trends</span>
         <div @click="selectTrend(trend)" class="trend-block" v-for="(trend, index) in novelTrends">
-          <trend-timeline :width="trendLineWidth" :height="height" :trend="trend" :last="index==novelTrends.length-1"></trend-timeline>
+          <div class="card-container">
+
+            <trend-timeline :width="trendLineWidth" :height="height" :trend="trend"
+                            :last="index==novelTrends.length-1"></trend-timeline>
+          </div>
         </div>
       </div>
 
@@ -45,7 +54,7 @@
     computed: {
       /* eslint no-bitwise: 0 */
       trendLineWidth() {
-        return ~~(this.width / 3) - 30;
+        return ~~(this.width / 3);
       },
     },
     methods: {
