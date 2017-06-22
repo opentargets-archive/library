@@ -19,17 +19,21 @@
       There are no abstracts matching your query and filters
     </div>
 
-    <div v-show="acc.length" class="table-container">
+    <div v-show="acc.length">
       <div class="total-abstracts">
         Showing {{acc.length}} abstracts of {{totalAbstracts}} matching your query and filters
       </div>
 
-      <div class="abstract-card" v-for="abstract in acc">
-        <abstract-card
-          @addSelectionToQuery="addFilterToSearch"
-          @setFilterAsQuery="setFilterAsQuery"
-          :abstract="abstract"
-        ></abstract-card>
+      <div class="abstracts-container">
+        <div class="abstract-card" v-for="abstract in acc">
+          <abstract-card
+            @addSelectionToQuery="addFilterToSearch"
+            @setFilterAsQuery="setFilterAsQuery"
+            @addFilter="addFilter"
+            :abstract="abstract"
+          ></abstract-card>
+        </div>
+
       </div>
 
       <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="30" infinite-scroll-immediate-check=false>
@@ -124,6 +128,9 @@
       },
     },
     methods: {
+      addFilter(who) {
+        this.filters.push(who);
+      },
       addFilterToSearch(who) {
         // relay, why it is not propagated up?
         this.$emit('addFilterToSearch', who);
@@ -139,13 +146,16 @@
       loadMore() {
         this.lastAbstract = this.acc[this.acc.length - 1];
       },
-
     },
   };
 
 </script>
 
 <style lang="scss">
+
+  .abstracts-container {
+    padding: 10px;
+  }
 
   .spinner-container {
     width: 10%;
@@ -155,7 +165,18 @@
   }
 
   .abstract-card {
-    margin-top: 30px;
+    margin-top: 20px;
+    padding: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 10px 10px 5px #888888;
+    -webkit-box-shadow: 10px 10px 5px #888888;
+    -moz--webkit-box-shadow: 10px 10px 5px #888888;
+    border: 1px #888888;
+    border-style: solid;
+    background: #ffffff;
+
+
   }
 
   .total-abstracts {

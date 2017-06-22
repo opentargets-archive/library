@@ -7,10 +7,10 @@ import App from './App.vue';
 // === DEFAULT / CUSTOM STYLE ===
 // WARNING! always comment out ONE of the two require() calls below.
 // 1. use next line to activate CUSTOM STYLE (./src/themes)
-// require(`./themes/app.${__THEME}.styl`)
+require(`./themes/app.${__THEME}.styl`);
 // 2. or, use next line to activate DEFAULT QUASAR STYLE
 /* eslint import/no-dynamic-require: 0 */
-require(`quasar-framework/dist/quasar.${__THEME}.css`);
+// require(`quasar-framework/dist/quasar.${__THEME}.css`);
 
 require('./main.scss');
 // ==============================

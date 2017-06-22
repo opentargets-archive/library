@@ -1,45 +1,42 @@
 <template>
   <div> <!-- root -->
     <div>
-      <!-- Paper details in a modal -->
-      <q-modal class="minimized" ref="paperDetails" :content-css="{padding: '50px'}">
-        <h4>{{title}}</h4>
-        <div class="paper-authors">
-          <span class="paper-author">{{author}}</span>
-        </div>
-        <div class="paper-journal">
-          <span class="paper-journal-abbrev">{{journal}}</span>
-          <span class="paper-year">{{year}}</span>
-          <span class="paper-volume">{{volume}}</span>
-          <span class="paper-issue">{{issue}}</span>
-          <span class="paper-pages">{{pages}}</span>
-        </div>
-        <div class="paper-pmid">PMID: <a target=_blank :href="epmcLink">{{pmid}}</a></div>
-
-        <!-- similar papers -->
-        <div>
-          <h4>Similar articles</h4>
-          <div v-show="loadingSimilarArticles"><i class="fa fa-spinner fa-spin"></i></div>
-          <div class="similar-paper" v-for="similarPaper in similar">
-            <h6><a target=_blank :href="similarPaper.europePmcLink">{{similarPaper._source.title}}</a></h6>
-            <div>
-              <div class="paper-authors">
-                <span class="paper-author">{{similarPaper.refAuthors}}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <button class="primary" @click="$refs.paperDetails.close()">Ok</button>
-      </q-modal>
-      <!-- /Paper details -->
-
-      <div @click="openAbstract" class="paper-title">
-        <a class="epmc_citation_link">{{title}}</a>
+      <div class="paper-title">
+        <a @click="setArticleAsQuery(pmid)" class="epmc_citation_link">{{title}}</a>
       </div>
-      <div class="paper-authors">
-        <span class="paper-author">{{author}}</span>
-        <!--<span class="paper-author" v-for="author in authors">{{author.short_name}}</span>-->
+
+      <div @mouseup="selectText" class="paper-authors"
+           @mouseover="showAuthorsToggle=true"
+           @mouseout="showAuthorsToggle=false"
+      >
+        <span
+          v-show="!showFullAuthors"
+          class="paper-author">{{authorShort}}
+          <span class="paper-show-more-or-less"
+                v-show="!noMoreAuthors && showAuthorsToggle"
+                @click="showFullAuthors=!showFullAuthors">
+            [Show all {{totalAuthors}} authors]
+          </span>
+        </span>
+        <span
+          v-show="showFullAuthors"
+          class="paper-author">{{author}}
+          <span class="paper-show-more-or-less"
+                v-show="showAuthorsToggle"
+                @click="showFullAuthors=!showFullAuthors">
+            [Show compact]
+          </span>
+        </span>
+
+        <q-context-menu ref="selectedText">
+          <selection-tooltip @addSelectionToQuery="addSelectionToQuery"
+                             @setSelectionAsQuery="setSelectionAsQuery"
+                             @addSelectionToFilter="addFilter"
+                             :selection="selectedText"
+          ></selection-tooltip>
+        </q-context-menu>
       </div>
+
       <div class="paper-journal">
         <span class="paper-journal-abbrev">{{journal}}</span>
         <span class="paper-year">{{year}}</span>
@@ -48,61 +45,45 @@
         <span class="paper-pages">{{pages}}</span>
       </div>
 
-      <div class="paper-pmid">PMID: {{pmid}}</div>
+      <!--<div class="paper-pmid">PMID: {{pmid}}</div>-->
 
-      <div v-show="!showFull">
-        <div class="paper-abstract-short">
-          Abstract: {{abstractTextShort}}
-        </div>
-        <div class="paper-show-more-or-less"><span @click="showMore()">[Show more]</span></div>
-      </div>
+      <!-- Pills with more details -->
+      <span v-show="showFull==false && abstractText" @click="showFull=true" class="paper-show-more-or-less">[Show abstract]</span>
+      <span v-show="!abstractText" class="paper-show-more-or-less inactive">[No abstract available]</span>
+      <span v-show="showFull==true" @click="showFull=false" class="paper-show-more-or-less">[Hide abstract]</span>
 
-      <div v-show="showFull">
-        <div @contextmenu="selectWord" class="paper-abstract-full">
-          Abstract: {{abstractText}}
-          <q-context-menu ref="selectedWord">
-            <div class="selectedWordTitle">
-              {{selectedWord}}
-              <span class="action-item remove" @click="$refs.selectedWord.close();$refs.selectedWordDiscard.close()">
-                <i class="fa fa-remove">
-                  <q-tooltip
-                    ref="selectedWordDiscard"
-                    anchor="center right"
-                    self="center left"
-                    :offset="[10, 0]"
-                  > Discard this selection
-                  </q-tooltip>
-                </i>
-              </span>
+      <span v-show="showSimilar==false" @click="showSimilar=true; searchSimilar();" class="paper-show-more-or-less">[Show similar articles]</span>
+      <span v-show="showSimilar==true" @click="showSimilar=false" class="paper-show-more-or-less">[Hide similar articles]</span>
 
-              <span class="action-item search" @click="addSelectionToQuery">
-                <i class="fa fa-search-plus">
-                  <q-tooltip
-                    anchor="center right"
-                    self="center left"
-                    :offset="[10, 0]"
-                  >Add selected text to the search query
-                  </q-tooltip>
-                </i>
-              </span>
-
-              <span class="action-item search" @click="setSelectionAsQuery">
-                <i class="fa fa-search">
-                  <q-tooltip
-                    anchor="center right"
-                    self="center left"
-                    :offset="[10, 0]"
-                  >Search for this text
-                  </q-tooltip>
-                </i>
-              </span>
-            </div>
-            <!--<button @click="addWordToQuery" class="primary">Add to Query</button>-->
-            <!--<button @click="$refs.context.close()" class="secondary">Discard</button>-->
+      <!-- Abstract -->
+      <div class="subsection" v-show="showFull">
+        <div @contextmenu="selectText" class="paper-abstract-full">
+        <!--<div @mouseup="selectAbstractText" class="paper-abstract-full">-->
+          <span class="abstract">{{abstractText}}</span>
+          <q-context-menu ref="selectedText">
+            <selection-tooltip @addSelectionToQuery="addSelectionToQuery"
+                               @setSelectionAsQuery="setSelectionAsQuery"
+                               @addSelectionToFilter="addFilter"
+                               :selection="selectedText"
+            ></selection-tooltip>
           </q-context-menu>
+
         </div>
-        <div class="paper-show-more-or-less"><span @click="showLess()">[Show less]</span></div>
       </div>
+
+      <!-- Similar articles -->
+      <div class="subsection" v-show="showSimilar">
+        <div class="subsection-title">Similar articles</div>
+        <div v-show="loadingSimilarArticles"><i class="fa fa-spinner fa-spin"></i></div>
+        <div class="similar-paper" v-for="similarPaper in similar">
+          <div @click="setArticleAsQuery(similarPaper.pmid)" class="similar-paper-title">
+            {{similarPaper.title}}
+          </div>
+          <div>{{similarPaper.authors}}</div>
+          <div>{{similarPaper.ref}}</div>
+        </div>
+      </div>
+
 
     </div>
   </div>
@@ -110,36 +91,66 @@
 
 <script>
   import axios from 'axios';
+  import selectionTooltip from './SelectionTooltip.vue';
 
   /* eslint no-underscore-dangle: 0 */
   export default {
     name: 'abstract-card',
     props: ['abstract'],
+    components: {
+      'selection-tooltip': selectionTooltip,
+    },
     data() {
       return {
+        // Authors
+        showAuthorsToggle: false,
+        showFullAuthors: false,
+        noMoreAuthors: false,
+
+        // Abstract
         showFull: false,
+
+        // Similar articles
+        showSimilar: false,
         similar: [],
         loadingSimilarArticles: false,
-        selectedWord: '',
+
+        // Selection
+        selectedText: '',
       };
     },
     methods: {
-      setSelectionAsQuery() {
+      setArticleAsQuery(who) {
+        this.setSelectionAsQuery(who);
+      },
+      addFilter() {
+        console.log('adding filter...');
+        this.$emit('addFilter', {
+          type: 'selection',
+          term: this.selectedText,
+        });
+      },
+      setSelectionAsQuery(what) {
         this.$emit('setFilterAsQuery', {
-          luceneQuery: this.selectedWord,
+          luceneQuery: `"${what}"`,
         });
       },
-      addSelectionToQuery() {
+      addSelectionToQuery(what) {
         this.$emit('addSelectionToQuery', {
-          luceneQuery: this.selectedWord,
+          luceneQuery: `"${what}"`,
         });
       },
-      selectWord() {
+      selectText() {
         const selection = window.getSelection();
-        this.selectedWord = selection.toString();
+        this.selectedText = selection.toString();
       },
-      openAbstract() {
-        this.$refs.paperDetails.open();
+      searchSimilar() {
+        // this.$refs.paperDetails.open();
+
+        // Don't load the similar articles more than once
+        if (this.similar.length) {
+          return;
+        }
 
         this.loadingSimilarArticles = true;
         const vueCtx = this;
@@ -149,29 +160,25 @@
             /* eslint no-param-reassign: 0 */
             vueCtx.loadingSimilarArticles = false;
             this.similar = resp.data.hits.hits.map((p) => {
-              p.refAuthors = '';
-              if (p._source.authors && p._source.authors.length) {
-                const authorNames = this.abstract._source.authors.map((d) => d.short_name);
-                if (authorNames.length === 1) {
-                  p.refAuthors = authorNames[0];
-                }
-                else if (authorNames.length === 2) {
-                  p.refAuthors = authorNames.join(' and ');
-                }
-                else {
-                  p.refAuthors = `${authorNames.slice(0, authorNames.length - 1).join(', ')} and ${authorNames[authorNames.length - 1]}`;
-                }
+              p.title = p._source.title;
+//              if (p.title.length > 120) {
+//                p.title = `${p.title.substr(0, 120)}...`;
+//              }
+              const authorNames = p._source.authors.map((d) => d.short_name);
+              if (authorNames.length === 1) {
+                return authorNames[0];
               }
+              if (authorNames.length === 2) {
+                return authorNames.join(' and ');
+              }
+              p.authors = `${authorNames.slice(0, 1)} et al`;
+
+              p.ref = `${p._source.journal.medlineAbbreviation} ${new Date(p._source.pub_date).getFullYear()}`;
               p.europePmcLink = `//europepmc.org/abstract/med/${p._id}`;
+              p.pmid = p._id;
               return p;
             });
           });
-      },
-      showMore() {
-        this.showFull = true;
-      },
-      showLess() {
-        this.showFull = false;
       },
     },
     computed: {
@@ -180,6 +187,24 @@
       },
       epmcLink() {
         return `//europepmc.org/abstract/med/${this.abstract._id}`;
+      },
+      totalAuthors() {
+        return this.abstract._source.authors.length;
+      },
+      authorShort() {
+        if (!this.abstract._source.authors || !this.abstract._source.authors.length) {
+          return '';
+        }
+        const authorNames = this.abstract._source.authors.map((d) => d.short_name);
+        if (authorNames.length === 1) {
+          this.noMoreAuthors = true;
+          return authorNames[0];
+        }
+        if (authorNames.length === 2) {
+          this.noMoreAuthors = true;
+          return authorNames.join(' and ');
+        }
+        return `${authorNames[0]} et al.`;
       },
       author() {
         if (!this.abstract._source.authors || !this.abstract._source.authors.length) {
@@ -228,10 +253,15 @@
 
 <style lang="scss">
   $lighter-color: #777777;
+
   .paper-show-more-or-less {
     color: #2e9dfd;
     font-size: 0.8em;
     cursor: pointer;
+    &.inactive {
+      color: inherit;
+      cursor: text;
+    }
   }
 
   .paper-pmid {
@@ -256,7 +286,11 @@
   }
 
   .similar-paper {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    .similar-paper-title {
+      color: #2e9dfd;
+      cursor: pointer;
+    }
   }
 
   .paper-abstract-short {
@@ -274,32 +308,36 @@
     );
     pointer-events: none; /* so the text is still selectable */
   }
-  .selectedWordTitle {
-    padding: 5px;
-    background: #dddddd;
-    vertical-align: baseline;
-    .actions {
-      top: 2px;
-      right: 0px;
-      padding-left: 5px;
-      display: inline-block;
-      vertical-align: baseline;
-      > .action-item {
-        padding-right: 1px;
-        padding-top: 2px;
-        padding-bottom: 2px;
-        cursor: pointer;
-        > i {
-          vertical-align: baseline;
-        }
-        /*&.search {*/
-          /*background-color: #64b5f7;*/
-        /*}*/
-        /*&.remove {*/
-          /*background-color: orange;*/
-        /*}*/
-      }
+
+  .subsection {
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #333333;
+    >.subsection-title {
+      font-size: 1em;
+      margin-bottom: 10px;
+    }
   }
 
-  }
+  /*.selectedWordTitle {*/
+    /*padding: 5px;*/
+    /*background: #dddddd;*/
+    /*vertical-align: baseline;*/
+    /*.actions {*/
+      /*top: 2px;*/
+      /*right: 0px;*/
+      /*padding-left: 5px;*/
+      /*display: inline-block;*/
+      /*vertical-align: baseline;*/
+      /*> .action-item {*/
+        /*padding-right: 1px;*/
+        /*padding-top: 2px;*/
+        /*padding-bottom: 2px;*/
+        /*cursor: pointer;*/
+        /*> i {*/
+          /*vertical-align: baseline;*/
+        /*}*/
+      /*}*/
+    /*}*/
+  /*}*/
 </style>
