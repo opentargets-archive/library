@@ -182,6 +182,7 @@
   }
 
   .filters-container {
+    margin-top: 10px;
     margin-bottom: 5px;
   }
 

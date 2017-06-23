@@ -2,7 +2,7 @@
   <q-layout>
     <masthead slot="header"></masthead>
 
-    <div id="searchbox" class="layout-view" ref="wrap">
+    <div id="searchbox" class="layout-view bg-light" ref="wrap">
       <div>
         <searchbox></searchbox>
       </div>

@@ -67,6 +67,7 @@
 <style lang="scss">
   $border-radius: 5px;
   .filter-pill {
+    margin-top: 20px;
     margin-right: 10px;
     position:relative;
     padding-top: 2px;

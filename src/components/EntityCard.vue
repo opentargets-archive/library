@@ -52,7 +52,7 @@
 
 <style lang="scss">
   .card-container {
-    margin: 10px;
+    margin-top: 10px;
     position: relative;
 
     .simulated-vertex {

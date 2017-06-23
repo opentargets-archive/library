@@ -7,7 +7,7 @@
         v-model="selectedAgg"
         :options="treemapSelect"
       ></q-select>
-      <div class="card-container">
+      <div>
         <div id="resultsTreemap"></div>
       </div>
 
@@ -26,6 +26,7 @@
     data() {
       return {
         dataIsPresent: false,
+        isMounted: false,
         selectedAgg: 'terms',
         treemapSelect: [
           {
@@ -55,6 +56,10 @@
         ],
       };
     },
+    mounted() {
+      console.log('it is mounted...');
+      this.isMounted = true;
+    },
     computed: {
       dataAndDims() {
         /* eslint no-unused-expressions: 0 */
@@ -62,6 +67,7 @@
         this.height;
         this.aggs;
         this.selectedAgg;
+        this.isMounted;
         return Date.now();
       },
     },
@@ -74,7 +80,10 @@
         }
       },
       dataAndDims() {
-        if (!this.aggs || !Object.keys(this.aggs).length || !this.width || !this.height) {
+        if (!this.isMounted || !this.aggs ||
+          !Object.keys(this.aggs).length ||
+          !this.width ||
+          !this.height) {
           return;
         }
         this.dataIsPresent = true;
@@ -89,7 +98,7 @@
         // Build a new treemap... (or update an existing treemap??)
         const tmap = otsTreemap()
           .data(hierarchy)
-          .width(w - 100)
+          .width(w - 70)
           .height(h)
           .on('click', (d) => {
             this.$emit('addFilter', {

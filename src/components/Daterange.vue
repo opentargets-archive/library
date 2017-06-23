@@ -1,6 +1,6 @@
 <template>
   <div> <!-- Root -->
-    <div class="card-container" v-show="!loading && svg">
+    <div v-show="!loading && svg">
       <div class="row gutter justify-stretch content-center text-center">
         <div v-bind:style="{ 'margin-left': margin + 'px', width: usedWidth + 'px' }" class="date-range-container">
           <div id="date-range-histogram"></div>

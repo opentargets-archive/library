@@ -25,7 +25,8 @@
           <div class="card-container">
 
             <trend-timeline :width="trendLineWidth" :height="height" :trend="trend"
-                            :last="index==novelTrends.length-1"></trend-timeline>
+                            :last="true"></trend-timeline>
+            <!--:last="index==novelTrends.length-1"-->
           </div>
         </div>
       </div>

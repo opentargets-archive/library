@@ -46,7 +46,6 @@
 <script type="text/javascript">
   import abstracts from './Abstracts.vue';
   import filters from './Filters.vue';
-  import entityCard from './EntityCard.vue';
   import lucene from '../services/lucene';
 
   export default {
@@ -63,7 +62,6 @@
     },
     components: {
       abstracts,
-      'entity-card': entityCard,
       filters,
     },
     mounted() {
@@ -105,7 +103,7 @@
 <style lang="scss">
   .main-container {
     position: relative;
-    margin-top: 10px;
+    // margin-top: 10px;
   }
 
   .search-container {
@@ -142,11 +140,10 @@
   .card-container {
     margin-top: 20px;
     padding: 10px;
-    padding: 10px;
     border-radius: 5px;
-    box-shadow: 10px 10px 5px #888888;
-    -webkit-box-shadow: 10px 10px 5px #888888;
-    -moz--webkit-box-shadow: 10px 10px 5px #888888;
+    /*box-shadow: 10px 10px 5px #888888;*/
+    /*-webkit-box-shadow: 10px 10px 5px #888888;*/
+    /*-moz--webkit-box-shadow: 10px 10px 5px #888888;*/
     border: 1px #888888;
     border-style: solid;
     background: #ffffff;
