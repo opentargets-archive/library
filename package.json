@@ -23,7 +23,7 @@
     "material-design-icons": "^3.0.1",
     "moment": "^2.15.0",
     "ots-graph": "^0.0.12",
-    "ots-treemap": "^0.0.1",
+    "ots-treemap": "^0.0.3",
     "quasar-framework": "^0.13.4",
     "roboto-fontface": "^0.7.0",
     "tnt.api": "^0.1.1",
