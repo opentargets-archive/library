@@ -4,4 +4,4 @@
  * 2. Go to https://app.netlify.com/sites/ranger-vincent-63775/deploys?filter=master and trigger a deploy
  * 3. Note that this won't change the domain name :-)
  */
-export default 'Kuiper';
+export default 'Library';
