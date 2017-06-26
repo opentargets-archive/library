@@ -26,8 +26,8 @@
     data() {
       return {
         dataIsPresent: false,
-        isMounted: false,
         selectedAgg: 'terms',
+        minHeight: 600,
         treemapSelect: [
           {
             label: 'Frequent terms',
@@ -56,10 +56,6 @@
         ],
       };
     },
-    mounted() {
-      console.log('it is mounted...');
-      this.isMounted = true;
-    },
     computed: {
       dataAndDims() {
         /* eslint no-unused-expressions: 0 */
@@ -67,7 +63,6 @@
         this.height;
         this.aggs;
         this.selectedAgg;
-        this.isMounted;
         return Date.now();
       },
     },
@@ -80,7 +75,7 @@
         }
       },
       dataAndDims() {
-        if (!this.isMounted || !this.aggs ||
+        if (!this.aggs ||
           !Object.keys(this.aggs).length ||
           !this.width ||
           !this.height) {
@@ -92,7 +87,11 @@
         const hierarchy = chunks2hierarchy(this.aggs[this.selectedAgg]);
 
         const w = this.width;
-        const h = this.height;
+        let h = this.height;
+
+        if (h < this.minHeight) {
+          h = this.minHeight;
+        }
 
         const container = document.getElementById('resultsTreemap');
         // Build a new treemap... (or update an existing treemap??)

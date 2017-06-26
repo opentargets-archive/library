@@ -105,7 +105,7 @@
 <style lang="scss">
   .main-container {
     position: relative;
-    // margin-top: 10px;
+    margin-top: 10px;
   }
 
   .search-container {
