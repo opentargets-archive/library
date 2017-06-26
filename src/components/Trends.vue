@@ -79,7 +79,7 @@
         this.loading = true;
 
         const baseUrl = 'https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/trends?query=';
-        const apiUrl = `${baseUrl}"${this.query}"`;
+        const apiUrl = `${baseUrl}${this.query}`;
         axios.get(apiUrl)
           .then((resp) => {
             this.loading = false;

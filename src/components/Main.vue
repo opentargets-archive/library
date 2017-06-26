@@ -82,8 +82,6 @@
         this.filters.push(who);
       },
       addSearchTerm(who) {
-        console.log('add this term...');
-        console.log(who);
         const query = lucene.compose(this.searchQuery, [who]);
         this.inputQuery = query;
         // this.filters = [];
