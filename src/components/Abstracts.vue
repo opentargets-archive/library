@@ -1,5 +1,5 @@
 <template>
-  <div> <!-- root -->
+  <div v-show="query"> <!-- root -->
 
     <div class="filters-container">
       <filter-pill

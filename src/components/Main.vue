@@ -37,8 +37,24 @@
             :filters="filters"
           ></abstracts>
         </div> <!-- /right panel -->
-
       </div> <!-- /grid -->
+
+      <div v-show="!searchQuery" class="salute vertical-middle">
+        <h5>Welcome to Open Targets | Library</h5>
+        <div class="subheader">This site allows to mine all the Pubmed articles in real time.</div>
+        <div>Some tips:</div>
+        <div>
+          <ul>
+            <li class="tip">You can search for multiple terms joining them with <span class="keyword">AND</span>, for example: <span class="keyword">BRAF AND melanoma</span></li>
+            <li class="tip">If a term has more than one word, use quotes. For example: <span class="keyword">"Alzheimer disease"</span></li>
+            <li class="tip">Use quotes as well if the term has non alpha-numerical values. For example: <span class="keyword">"K-RAS"</span></li>
+          </ul>
+        </div>
+        <div>
+          This site is currently under development.
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -147,5 +163,25 @@
     border: 1px #888888;
     border-style: solid;
     background: #ffffff;
+  }
+
+  .salute {
+    width: 30%;
+    margin: auto;
+    border: 1px solid #dddddd;
+    padding: 15px;
+    margin-top: 50px;
+    .keyword {
+      font-size: 0.9em;
+      background: #f4f4f4;
+      color: steelblue;
+      padding: 2px;
+    }
+    .subheader {
+      margin-bottom: 10px;
+    }
+    .tip {
+      margin-bottom: 10px;
+    }
   }
 </style>

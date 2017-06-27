@@ -1,5 +1,5 @@
 <template>
-  <div> <!-- Root -->
+  <div v-show="query"> <!-- Root -->
 
     <!-- Filters tabs -->
     <q-tabs

@@ -9,10 +9,9 @@
 
 
     <div v-show="!showSpinner" class="topics-menu">
-      <div v-for="topic in topics" :style="{'background-color': topic.color, 'opacity':'0.8'}" class="topic-item" @click="selectTopic(topic);">
-        {{topic.name}} -- {{topic.vertices.length}}
-      </div>
-
+      <!--<div v-for="topic in topics" :style="{'background-color': topic.color, 'opacity':'0.8'}" class="topic-item" @click="selectTopic(topic);">-->
+        <!--{{topic.name}} &#45;&#45; {{topic.vertices.length}}-->
+      <!--</div>-->
     </div>
 
     <div class="page-spinner" v-show="showFailed">
@@ -97,7 +96,7 @@
 
         graph = otSearch()
           .width(this.width - 100)
-          .height(this.height)
+          .height(this.height - 120)
           .nodeSize(10)
           .query(vueCtx.query)
           .fields(cleanFields)
