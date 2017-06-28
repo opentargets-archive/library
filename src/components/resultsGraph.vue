@@ -9,8 +9,13 @@
 
 
     <div v-show="!showSpinner" class="topics-menu">
-      <div v-for="topic in topics" :style="{'background-color': topic.color, 'opacity':'0.8'}" class="topic-item" @click="selectTopic(topic);">
-        {{topic.name}} -- {{topic.vertices.length}}
+      <div
+        class="topic-item"
+        @click="topicVisible=!topicVisible"
+        style="background: #333333; color:#f4f4f4"
+      >Topics <i :class="['fa', topicVisible ? 'fa-caret-down' : 'fa-caret-right']"></i></div>
+      <div v-for="topic in topics" :style="{'background-color':topic.color, 'opacity':'0.8', display:topicVisible ? 'block' : 'none'}" class="topic-item" @click="selectTopic(topic);">
+        {{topic.name}}
       </div>
     </div>
 
@@ -44,6 +49,7 @@
         topics: [],
         fields: entities.defaultEntities,
         colors: entities.colors,
+        topicVisible: false,
       };
     },
     computed: {
@@ -147,10 +153,12 @@
 
     .topics-menu {
       position:absolute;
-      width: 150px;
+      // width: 150px;
       font-size: 0.8em;
-      right: 10px;
-      padding: 10px;
+      right: 0px;
+      // padding: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
       background: white;
 
       >.topic-item {
