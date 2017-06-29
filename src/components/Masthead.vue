@@ -19,7 +19,7 @@
     data() {
       return {
         name,
-        version: 'beta',
+        version: 'alpha',
       };
     },
   };

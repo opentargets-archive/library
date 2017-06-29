@@ -17,7 +17,7 @@
 
 
 <script>
-  import otsTreemap from 'ots-treemap';
+  import otsTreemap from 'otl-treemap';
   import chunks2hierarchy from '../services/chunks2hierarchy';
 
   export default {

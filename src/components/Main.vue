@@ -11,6 +11,7 @@
       <div class="search-button" @click="doSearch">
         <i class="fa fa-search"></i>
       </div>
+
     </div>
 
     <div class="main-container">

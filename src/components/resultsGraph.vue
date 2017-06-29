@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import otSearch from 'ots-graph';
+  import otSearch from 'otl-graph';
   import entities from '../services/entities';
 
   let graph; // The graph
