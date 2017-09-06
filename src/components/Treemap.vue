@@ -53,6 +53,14 @@
             label: 'Authors',
             value: 'authors',
           },
+          {
+            label: 'Genes',
+            value: 'genes',
+          },
+          {
+            label: 'Diseases',
+            value: 'diseases',
+          },
         ],
       };
     },

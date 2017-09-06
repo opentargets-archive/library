@@ -105,6 +105,8 @@
               chemicals: resp.data.aggregations.chemicals_name_significant_terms.buckets,
               journals: resp.data.aggregations.journal_abbr_significant_terms.buckets,
               authors: resp.data.aggregations.authors_significant_terms.buckets,
+              genes: resp.data.aggregations.genes.buckets,
+              diseases: resp.data.aggregations.diseases.buckets,
             };
             this.dateHistogram = resp.data.aggregations.pub_date_histogram.buckets;
           });
