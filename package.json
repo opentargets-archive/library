@@ -22,7 +22,7 @@
     "lucene": "^1.1.1",
     "material-design-icons": "^3.0.1",
     "moment": "^2.15.0",
-    "otl-graph": "^0.0.1",
+    "otl-graph": "^0.0.2",
     "otl-treemap": "^0.0.1",
     "quasar-framework": "^0.13.4",
     "roboto-fontface": "^0.7.0",

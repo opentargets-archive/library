@@ -154,7 +154,7 @@
 
         this.loadingSimilarArticles = true;
         const vueCtx = this;
-        const url = `https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/document-more-like-this/${this.abstract._id}`;
+        const url = `https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev/document-more-like-this/${this.abstract._id}`;
         axios.get(url)
           .then((resp) => {
             /* eslint no-param-reassign: 0 */
