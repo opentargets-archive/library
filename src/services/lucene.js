@@ -3,8 +3,10 @@ import * as lucene from 'lucene';
 export default {
   decode: lucene.parse,
   encode: lucene.toString,
-  compose3(query, filters) {
+  compose3(filters) {
+    if (!filters.length) return '';
     const filtersClean = filters.map((f) => {
+      console.log(f);
       if (f.type === 'date') {
         // egypt AND pub_date:[1900-10-30 TO 2016-10-30]
         const [minYear, maxYear] = f.term.split('-');
@@ -17,7 +19,7 @@ export default {
       f.luceneQuery = `"${f.term}"`;
       return f.luceneQuery;
     });
-    return [query, ...filtersClean].join(' AND ');
+    return [...filtersClean].join(' AND ');
   },
   compose2(query, topic, terms) {
     let termSoFar = query;

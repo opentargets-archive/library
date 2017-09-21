@@ -6,7 +6,7 @@
   </div>
 </template>
 <script type="text/javascript">
-  import name from '../services/name';
+  import { name } from '../services/name';
 
   export default {
     data() {

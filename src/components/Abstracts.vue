@@ -1,17 +1,17 @@
 <template>
-  <div v-show="query"> <!-- root -->
+  <div v-show="filters"> <!-- root -->
 
-    <div class="filters-container">
-      <filter-pill
-        v-for="(filter, index) in filters"
-        :key="index"
-        :filter="filter"
-        @removeFilter="removeFilter"
-        @addFilterToSearch="addFilterToSearch"
-        @setFilterAsQuery="setFilterAsQuery"
-      >
-      </filter-pill>
-    </div>
+    <!--<div class="filters-container">-->
+      <!--<filter-pill-->
+        <!--v-for="(filter, index) in filters"-->
+        <!--:key="index"-->
+        <!--:filter="filter"-->
+        <!--@removeFilter="removeFilter"-->
+        <!--@addFilterToSearch="addFilterToSearch"-->
+        <!--@setFilterAsQuery="setFilterAsQuery"-->
+      <!--&gt;-->
+      <!--</filter-pill>-->
+    <!--</div>-->
 
     <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
 
@@ -48,13 +48,16 @@
 
 <script>
   import axios from 'axios';
+  import { mapMutations } from 'vuex';
   import infiniteScroll from 'vue-infinite-scroll';
   import AbstractCard from './AbstractCard.vue';
   import FilterPill from './FilterPill.vue';
   import lucene from '../services/lucene';
+  import apiBaseUrl from '../services/api';
 
 
-  const apiBaseUrl = 'https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/search';
+  // const apiBaseUrl = 'https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/search';
+  // const apiBaseUrl = 'https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev/search';
 
   export default {
     components: {
@@ -68,13 +71,13 @@
       apiUrl() {
         /* eslint no-underscore-dangle: 0 */
         /* eslint no-unused-expressions: 0 */
-        const query = lucene.compose3(this.query, this.filters);
+        const query = lucene.compose3(this.filters);
+        console.log(`query: ${query}`);
         let search = `query=${query}`;
         if (this.lastAbstract) {
-          search = `${search}&search_after=${this.lastAbstract.sort[0]}&search_after_id=${this.lastAbstract._id}`;
+          search = `${search}&aggs=true&search_after=${this.lastAbstract.sort[0]}&search_after_id=${this.lastAbstract._id}`;
         }
-        const url = `${apiBaseUrl}?${search}`;
-        console.log(`new url... ${url}`);
+        const url = `${apiBaseUrl}/search?aggs=true&${search}`;
         this.counter += 1;
         return `${url}#-#${this.counter}`;
       },
@@ -96,22 +99,28 @@
         },
       };
     },
-    props: ['query', 'filters'],
+    props: ['filters'],
     watch: {
       filters() {
         this.acc = [];
         this.lastAbstract = '';
       },
-      query() {
-        this.acc = [];
-        this.lastAbstract = '';
-      },
+//      query() {
+//        this.acc = [];
+//        this.lastAbstract = '';
+//      },
       apiUrl() {
         this.loading = true;
         const apiUrl = this.apiUrl.split('#-#')[0];
+        console.log(`apiUrl: ${apiUrl}`);
         axios.get(apiUrl)
           .then((resp) => {
             this.loading = false;
+            console.log('loaded abstracts and aggregations');
+            console.log(resp.data);
+            // Add the aggregations to the Vuex store...
+            this.setAggs(resp.data.aggregations);
+
             const data = resp.data.hits;
             this.abstracts = data.hits;
             this.acc = [...this.acc, ...this.abstracts];
@@ -146,6 +155,9 @@
       loadMore() {
         this.lastAbstract = this.acc[this.acc.length - 1];
       },
+      ...mapMutations('aggs', [
+        'setAggs',
+      ]),
     },
   };
 
@@ -178,12 +190,13 @@
   /*}*/
 
   .total-abstracts {
+    margin-left: 20px;
     font-size: 0.7em;
   }
 
-  .filters-container {
-    margin-top: 10px;
-    margin-bottom: 5px;
-  }
+  /*.filters-container {*/
+    /*margin-top: 10px;*/
+    /*margin-bottom: 5px;*/
+  /*}*/
 
 </style>

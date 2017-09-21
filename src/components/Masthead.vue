@@ -12,26 +12,18 @@
 </template>
 
 <script type="text/javascript">
-  import name from '../services/name';
+  import { name, version } from '../services/name';
 
   export default {
     name: 'masthead',
     data() {
       return {
         name,
-        version: 'alpha',
+        version,
       };
     },
   };
 </script>
 
 <style lang="scss">
-  .open-targets {
-    opacity: 0.8;
-  }
-  .beta-tag {
-    font-size: 0.5em;
-    font-weight: bold;
-    padding: 3px;
-  }
 </style>

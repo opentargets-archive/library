@@ -1,6 +1,6 @@
 <template>
   <span class="filter-pill" v-bind:style="{'background': pillColor}">
-    <span>{{filter.term}}</span>
+    <span>{{filter.term}} | {{filter.type}}</span>
     <span class="actions">
       <span class="action-item remove" @click="removeFilter">
         <i class="fa fa-remove">
@@ -40,17 +40,24 @@
 </template>
 
 <script>
+  import { mapMutations } from 'vuex';
   import pillColors from '../services/pillColors';
+  // import * as filters from '../services/filters';
 
   export default {
     name: 'filter-pill',
     props: ['filter'],
     methods: {
+      ...mapMutations('filters', {
+        removeFilterFromStore: 'removeFilter',
+      }),
       addFilterToSearch() {
         this.$emit('addFilterToSearch', this.filter);
       },
       removeFilter() {
-        this.$emit('removeFilter', this.filter);
+        // this.$emit('removeFilter', this.filter);
+        // filters.remove(this.filter);
+        this.removeFilterFromStore(this.filter);
       },
       setFilterAsQuery() {
         this.$emit('setFilterAsQuery', this.filter);

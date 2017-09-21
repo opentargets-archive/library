@@ -3,6 +3,7 @@ import Vue from 'vue';
 import Quasar from 'quasar-framework';
 import router from './router';
 import App from './App.vue';
+import store from './store';
 
 // === DEFAULT / CUSTOM STYLE ===
 // WARNING! always comment out ONE of the two require() calls below.
@@ -21,6 +22,7 @@ Quasar.start(() => {
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
+    store,
     router,
     template: '<App></App>',
     components: { App },

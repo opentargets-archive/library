@@ -4,4 +4,5 @@ export default {
   trend: '#e78ac3',
   topic: '#a6d854',
   selection: '#fdb462',
+  query: '#ff432f',
 };
