@@ -48,7 +48,7 @@
       <!--<div class="paper-pmid">PMID: {{pmid}}</div>-->
 
       <!-- Pills with more details -->
-      <span v-show="showFull==false && abstractText" @click="showFull=true" class="paper-show-more-or-less">[Show abstract]</span>
+      <span v-show="showFull==false && abstractText" @click="showFull=true; showAbstract();" class="paper-show-more-or-less">[Show abstract]</span>
       <span v-show="!abstractText" class="paper-show-more-or-less inactive">[No abstract available]</span>
       <span v-show="showFull==true" @click="showFull=false" class="paper-show-more-or-less">[Hide abstract]</span>
 
@@ -57,9 +57,15 @@
 
       <!-- Abstract -->
       <div class="subsection" v-show="showFull">
+        <div v-show="loadingAbstract"><i class="fa fa-spinner fa-spin"></i></div>
         <div @contextmenu="selectText" class="paper-abstract-full">
         <!--<div @mouseup="selectAbstractText" class="paper-abstract-full">-->
-          <span class="abstract">{{abstractText}}</span>
+          <!--<span class="abstract">{{abstractText}}</span>-->
+          <span :id="abstractDomId" class="abstract"></span>
+          <span data-entity="GENE">Gene</span>
+          <span data-entity="DISEASE">Disease</span>
+          <span data-entity="DRUG">Drug</span>
+          <span data-entity="TARGET&DISEASE">Target and disease</span>
           <q-context-menu ref="selectedText">
             <selection-tooltip @addSelectionToQuery="addSelectionToQuery"
                                @setSelectionAsQuery="setSelectionAsQuery"
@@ -90,8 +96,11 @@
 </template>
 
 <script>
+  import Vue from 'vue';
   import axios from 'axios';
   import selectionTooltip from './SelectionTooltip.vue';
+
+  const apiBaseUrl = 'https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev';
 
   /* eslint no-underscore-dangle: 0 */
   export default {
@@ -109,6 +118,9 @@
 
         // Abstract
         showFull: false,
+        loadingAbstract: false,
+        abstractMarked: '',
+        abstractDomId: '',
 
         // Similar articles
         showSimilar: false,
@@ -124,7 +136,6 @@
         this.setSelectionAsQuery(who);
       },
       addFilter() {
-        console.log('adding filter...');
         this.$emit('addFilter', {
           type: 'selection',
           term: this.selectedText,
@@ -143,6 +154,26 @@
       selectText() {
         const selection = window.getSelection();
         this.selectedText = selection.toString();
+      },
+      replaceMark(match) {
+        if (match.startsWith('</')) {
+          return '</span';
+        }
+        return `<span class="${match.substring(1)}"`;
+      },
+      showAbstract() {
+        this.loadingAbstract = true;
+        const vueCtx = this;
+        this.abstractDomId = `abstract${this.abstract._id}`;
+        const url = `${apiBaseUrl}/entity/markedtext/${this.abstract._id}`;
+        axios.get(url)
+          .then((resp) => {
+            vueCtx.loadingAbstract = false;
+            const parsed = resp.data.abstract.replace(/<\/?mark-\d+/g, this.replaceMark);
+            new Vue({
+              template: `<div>${parsed}</div>`,
+            }).$mount(`#${this.abstractDomId}`);
+          });
       },
       searchSimilar() {
         // this.$refs.paperDetails.open();
@@ -195,7 +226,8 @@
         if (!this.abstract._source.authors || !this.abstract._source.authors.length) {
           return '';
         }
-        const authorNames = this.abstract._source.authors.map((d) => d.short_name);
+//        const authorNames = this.abstract._source.authors.map((d) => d.short_name);
+        const authorNames = this.abstract._source.authors.map((d) => `${d.LastName} ${d.Initials}`);
         if (authorNames.length === 1) {
           this.noMoreAuthors = true;
           return authorNames[0];
@@ -210,7 +242,8 @@
         if (!this.abstract._source.authors || !this.abstract._source.authors.length) {
           return '';
         }
-        const authorNames = this.abstract._source.authors.map((d) => d.short_name);
+        // const authorNames = this.abstract._source.authors.map((d) => d.short_name);
+        const authorNames = this.abstract._source.authors.map((d) => `${d.LastName} ${d.Initials}`);
         if (authorNames.length === 1) {
           return authorNames[0];
         }
@@ -318,6 +351,219 @@
       margin-bottom: 10px;
     }
   }
+
+  .entities {
+    line-height: 1.5em;
+  }
+
+
+  @mixin entity() {
+    padding: 0.15em 0.15em;
+    margin: 0px 0.25em;
+    line-height: 1;
+    display: inline-block;
+    border-radius: 0.25em;
+    border: 1px solid;
+  }
+
+  @mixin entity-after() {
+    box-sizing: border-box;
+    /*content: attr(data-entity) " | " attr(reference-db);*/
+    font-size: 0.6em;
+    line-height: 1;
+    padding: 0.25em;
+    border-radius: 0.25em;
+    text-transform: uppercase;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0px 0px 0.1rem 0.5rem;
+  }
+
+  [data-entity="DISEASE"] {
+    @include entity();
+  }
+  [data-entity="GENE"] {
+    @include entity();
+  }
+  [data-entity="TARGET&DISEASE"] {
+    @include entity();
+  }
+  [data-entity="DRUG"] {
+    @include entity();
+  }
+
+
+  [data-entity="DISEASE"]::after {
+    @include entity-after();
+  }
+  [data-entity="GENE"]::after {
+    @include entity-after();
+  }
+  [data-entity="TARGET&DISEASE"]::after {
+    @include entity-after();
+  }
+  [data-entity="DRUG"]::after {
+    @include entity-after();
+  }
+
+  /*[data-entity][data-entity="GENE"] {*/
+    /*background: rgba(166, 226, 45, 0.2);*/
+    /*border-color: rgb(166, 226, 45);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"]::after {*/
+    /*background: rgb(166, 226, 45);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"] {*/
+    /*background: rgba(196, 146, 145, 0.2);*/
+    /*border-color: rgb(196, 146, 145);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"]::after {*/
+    /*background: rgb(196, 146, 145);*/
+  /*}*/
+  [data-entity][data-entity="DRUG"] {
+    background: rgba(224, 0, 132, 0.2);
+    border-color: rgb(224, 0, 132);
+  }
+  [data-entity][data-entity="DRUG"]::after {
+    background: rgb(224, 0, 132);
+  }
+  /*[data-entity][data-entity="DRUG"] {*/
+    /*background: rgba(67, 198, 102, 0.2);*/
+    /*border-color: rgb(67, 198, 102);*/
+  /*}*/
+  /*[data-entity][data-entity="DRUG"]::after {*/
+    /*background: rgb(67, 198, 102);*/
+  /*}*/
+  [data-entity][data-entity="DISEASE"] {
+    background: rgba(67, 198, 252, 0.2);
+    border-color: rgb(67, 198, 252);
+  }
+  [data-entity][data-entity="DISEASE"]::after {
+    background: rgb(67, 198, 252);
+  }
+  /*[data-entity][data-entity="CHEMICAL"] {*/
+    /*background: rgba(253, 151, 32, 0.2);*/
+    /*border-color: rgb(253, 151, 32);*/
+  /*}*/
+  /*[data-entity][data-entity="CHEMICAL"]::after {*/
+    /*background: rgb(253, 151, 32);*/
+  /*}*/
+  /*[data-entity][data-entity="ANATOMY"] {*/
+    /*background: rgba(253, 151, 32, 0.2);*/
+    /*border-color: rgb(253, 151, 32);*/
+  /*}*/
+  /*[data-entity][data-entity="ANATOMY"]::after {*/
+    /*background: rgb(253, 151, 32);*/
+  /*}*/
+  /*[data-entity][data-entity="NAMEDGROUP"] {*/
+    /*background: rgba(142, 125, 255, 0.2);*/
+    /*border-color: rgb(142, 125, 255);*/
+  /*}*/
+  /*[data-entity][data-entity="NAMEDGROUP"]::after {*/
+    /*background: rgb(142, 125, 255);*/
+  /*}*/
+  /*[data-entity][data-entity="PROCESS"] {*/
+    /*background: rgba(255, 204, 0, 0.2);*/
+    /*border-color: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PROCESS"]::after {*/
+    /*background: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PSICHIATRY"] {*/
+    /*background: rgba(255, 204, 0, 0.2);*/
+    /*border-color: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PSICHIATRY"]::after {*/
+    /*background: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PHENOTYPE"] {*/
+    /*background: rgba(255, 204, 0, 0.2);*/
+    /*border-color: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PHENOTYPE"]::after {*/
+    /*background: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="INFORMATIONSCIENCE"] {*/
+    /*background: rgba(47, 187, 171, 0.2);*/
+    /*border-color: rgb(47, 187, 171);*/
+  /*}*/
+  /*[data-entity][data-entity="INFORMATIONSCIENCE"]::after {*/
+    /*background: rgb(47, 187, 171);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"] {*/
+    /*background: rgba(47, 187, 171, 0.2);*/
+    /*border-color: rgb(47, 187, 171);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"]::after {*/
+    /*background: rgb(47, 187, 171);*/
+  /*}*/
+  /*[data-entity][data-entity="ANTROPOLOGY"] {*/
+    /*background: rgba(153, 153, 153, 0.2);*/
+    /*border-color: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="ANTROPOLOGY"]::after {*/
+    /*background: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="HUMANITIES"] {*/
+    /*background: rgba(153, 153, 153, 0.2);*/
+    /*border-color: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="HUMANITIES"]::after {*/
+    /*background: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="HEALTHCARE"] {*/
+    /*background: rgba(153, 153, 153, 0.2);*/
+    /*border-color: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="HEALTHCARE"]::after {*/
+    /*background: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="TECHNOLOGY"] {*/
+    /*background: rgba(153, 153, 153, 0.2);*/
+    /*border-color: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="TECHNOLOGY"]::after {*/
+    /*background: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="PUBLICATION"] {*/
+    /*background: rgba(153, 153, 53, 0.2);*/
+    /*border-color: rgb(153, 153, 53);*/
+  /*}*/
+  /*[data-entity][data-entity="PUBLICATION"]::after {*/
+    /*background: rgb(153, 153, 53);*/
+  /*}*/
+  [data-entity][data-entity="TARGET&DISEASE"] {
+    background: rgba(105, 145, 243, 0.2);
+    border-color: rgb(105, 145, 243);
+    /*   display: inline; */
+    border: 1px dashed;
+  }
+  [data-entity][data-entity="TARGET&DISEASE"]::after {
+    background: rgb(105, 145, 243);
+  }
+  /*[data-entity][data-entity="PATHWAY"] {*/
+    /*background: rgba(205, 85, 143, 0.2);*/
+    /*border-color: rgb(205, 85, 143);*/
+    /*!*   display: inline; *!*/
+    /*border: 1px dashed;*/
+  /*}*/
+  /*[data-entity][data-entity="PATHWAY"]::after {*/
+    /*background: rgb(205, 85, 143);*/
+  /*}*/
+  [data-entity][data-entity="GENE"] {
+    background: rgba(87, 227, 81, 0.2);
+    border-color: rgb(87, 227, 81);
+  }
+  [data-entity][data-entity="GENE"]::after {
+    background: rgb(87, 227, 81);
+  }
+  /*[data-entity][data-entity="LOC"] {*/
+    /*background: rgba(180, 180, 180, 0.2);*/
+    /*border-color: rgb(180, 180, 180);*/
+  /*}*/
+  /*[data-entity][data-entity="LOC"]::after {*/
+    /*background: rgb(180, 180, 180);*/
+  /*}*/
 
   /*.selectedWordTitle {*/
     /*padding: 5px;*/

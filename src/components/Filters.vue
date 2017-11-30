@@ -100,13 +100,12 @@
             // this.topChunks = resp.data.aggregations.top_chunks_significant_terms.buckets;
             this.aggs = {
               terms: resp.data.aggregations.top_chunks_significant_terms.buckets,
-              keywords: resp.data.aggregations.keywords_significant_terms.buckets,
-              mesh_terms: resp.data.aggregations.mesh_headings_label_significant_terms.buckets,
-              chemicals: resp.data.aggregations.chemicals_name_significant_terms.buckets,
-              journals: resp.data.aggregations.journal_abbr_significant_terms.buckets,
-              authors: resp.data.aggregations.authors_significant_terms.buckets,
               genes: resp.data.aggregations.genes.buckets,
               diseases: resp.data.aggregations.diseases.buckets,
+              phenotypes: resp.data.aggregations.phenotypes.buckets,
+              drugs: resp.data.aggregations.drugs.buckets,
+              journals: resp.data.aggregations.journal_abbr_significant_terms.buckets,
+              authors: resp.data.aggregations.authors_significant_terms.buckets,
             };
             this.dateHistogram = resp.data.aggregations.pub_date_histogram.buckets;
           });

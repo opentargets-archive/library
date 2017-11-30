@@ -30,28 +30,8 @@
         minHeight: 600,
         treemapSelect: [
           {
-            label: 'Frequent terms',
+            label: 'Concepts',
             value: 'terms',
-          },
-          {
-            label: 'Curated keywords',
-            value: 'keywords',
-          },
-          {
-            label: 'Mesh terms',
-            value: 'mesh_terms',
-          },
-          {
-            label: 'Chemicals',
-            value: 'chemicals',
-          },
-          {
-            label: 'Journals',
-            value: 'journals',
-          },
-          {
-            label: 'Authors',
-            value: 'authors',
           },
           {
             label: 'Genes',
@@ -60,6 +40,22 @@
           {
             label: 'Diseases',
             value: 'diseases',
+          },
+          {
+            label: 'Phenotypes',
+            value: 'phenotypes',
+          },
+          {
+            label: 'Drugs',
+            value: 'drugs',
+          },
+          {
+            label: 'Journals',
+            value: 'journals',
+          },
+          {
+            label: 'Authors',
+            value: 'authors',
           },
         ],
       };
