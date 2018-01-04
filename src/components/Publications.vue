@@ -40,7 +40,7 @@
       },
     },
     mounted() {
-//      console.log('mounted Publications');
+      this.filters = this.getAllFilters;
 //      console.log(this.$store.getters['filters/getAllFilters']);
       // this.query = this.$route.query.query;
 //      eventHub.$on('query', (query) => {

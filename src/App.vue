@@ -34,11 +34,14 @@
 </template>
 
 <script>
+  import { mapGetters, mapMutations } from 'vuex';
   import Masthead from './components/Masthead.vue';
   import Mastfoot from './components/Mastfoot.vue';
   import Main from './components/Main.vue';
   import FiltersApplied from './components/FiltersApplied.vue';
   import { name, version } from './services/name';
+  import lucene from './services/lucene';
+  import router from './router';
 
   export default {
     name: 'app',
@@ -53,8 +56,6 @@
         return this.$route.query.query;
       },
       publicationsUrl() {
-        console.log('router is...');
-        console.log(this.$route);
         return `/publications?query=${this.commonQueryUrl}`;
       },
       trendsUrl() {
@@ -63,6 +64,61 @@
       topicsUrl() {
         return `/topics?query=${this.commonQueryUrl}`;
       },
+      ...mapGetters('filters', [
+        'getAllFilters',
+      ]),
+    },
+    watch: {
+      getAllFilters() {
+        console.warn('filters have changed and I can see them from App.vue');
+        console.log(this.getAllFilters);
+        // const currQuery = _.clone(this.$route.query);
+        const currQuery = Object.assign({}, this.$route.query);
+        console.log(`current path: ${this.$route.path}`);
+        console.log(currQuery);
+        const query = lucene.compose3(this.getAllFilters);
+        console.log(query);
+
+        router.push({
+          path: 'publications',
+          query: {
+            ...currQuery,
+            query,
+          },
+        });
+      },
+    },
+    mounted() {
+      const params = this.parseParams();
+      if (params.query) {
+        this.addFilter({
+          term: params.query,
+          type: 'query',
+        });
+      }
+    },
+    methods: {
+      parseParams() {
+        const url = window.location.href;
+
+        const pos = url.indexOf('?');
+        if (pos < 0) {
+          return {};
+        }
+        const params = {};
+        const hashes = url.slice(pos + 1).split('&');
+
+        console.log(hashes);
+        for (let i = 0; i < hashes.length; i += 1) {
+          const hash = hashes[i].split('=');
+          params[hash[0]] = decodeURI(hash[1]) || null;
+          // vars.push({ name: hash[0], value: hash.length > 1 ? hash[1] : null });
+        }
+        return params;
+      },
+      ...mapMutations('filters', [
+        'addFilter',
+      ]),
     },
     components: {
       masthead: Masthead,

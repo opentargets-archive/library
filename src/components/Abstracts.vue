@@ -15,7 +15,7 @@
 
     <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
 
-    <div v-show="totalAbstracts==0 && !loading" class="total-abstracts">
+    <div v-show="totalAbstracts===0 && !loading" class="total-abstracts">
       There are no abstracts matching your query and filters
     </div>
 
@@ -27,8 +27,6 @@
       <div class="abstracts-container">
         <div class="card-container" v-for="abstract in acc">
           <abstract-card
-            @addSelectionToQuery="addFilterToSearch"
-            @setFilterAsQuery="setFilterAsQuery"
             @addFilter="addFilter"
             :abstract="abstract"
           ></abstract-card>
@@ -72,7 +70,6 @@
         /* eslint no-underscore-dangle: 0 */
         /* eslint no-unused-expressions: 0 */
         const query = lucene.compose3(this.filters);
-        console.log(`query: ${query}`);
         let search = `query=${query}`;
         if (this.lastAbstract) {
           search = `${search}&aggs=true&search_after=${this.lastAbstract.sort[0]}&search_after_id=${this.lastAbstract._id}`;
@@ -116,8 +113,6 @@
         axios.get(apiUrl)
           .then((resp) => {
             this.loading = false;
-            console.log('loaded abstracts and aggregations');
-            console.log(resp.data);
             // Add the aggregations to the Vuex store...
             this.setAggs(resp.data.aggregations);
 
@@ -140,16 +135,16 @@
       addFilter(who) {
         this.filters.push(who);
       },
-      addFilterToSearch(who) {
-        // relay, why it is not propagated up?
-        this.$emit('addFilterToSearch', who);
-      },
-      removeFilter(who) {
-        this.$emit('removeFilter', who);
-      },
-      setFilterAsQuery(who) {
-        this.$emit('setFilterAsQuery', who);
-      },
+      // addFilterToSearch(who) {
+      //   // relay, why it is not propagated up?
+      //   this.$emit('addFilterToSearch', who);
+      // },
+      // removeFilter(who) {
+      //   this.$emit('removeFilter', who);
+      // },
+      // setFilterAsQuery(who) {
+      //   this.$emit('setFilterAsQuery', who);
+      // },
 
       // fetch data is here to work with the infinite scrolling (not working for now)
       loadMore() {

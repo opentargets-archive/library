@@ -35,6 +35,10 @@ export default {
       }
     },
 
+    removeAllFilters(state) {
+      state.currFilters = {};
+    },
+
     removeFilter(state, filter) {
       const thisFilter = state.currFilters[filter.type];
       const newFilters = [];
@@ -57,6 +61,8 @@ export default {
   },
   getters: {
     getAllFilters: state => {
+      console.log('get all filters called.... ********');
+      console.log(state.currFilters);
       let ftemp = [];
       Object.keys(state.currFilters).forEach((type) => {
         ftemp = [...ftemp, ...state.currFilters[type]];

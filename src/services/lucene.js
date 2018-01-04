@@ -6,7 +6,6 @@ export default {
   compose3(filters) {
     if (!filters.length) return '';
     const filtersClean = filters.map((f) => {
-      console.log(f);
       if (f.type === 'date') {
         // egypt AND pub_date:[1900-10-30 TO 2016-10-30]
         const [minYear, maxYear] = f.term.split('-');

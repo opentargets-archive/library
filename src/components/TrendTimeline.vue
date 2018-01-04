@@ -12,7 +12,7 @@
 
   export default {
     name: 'trend-timeline',
-    props: ['trend', 'last', 'width', 'height'],
+    props: ['trend', 'width', 'height', 'last'],
     computed: {
       term() {
         const term = Object.keys(this.trend)[0];
@@ -54,7 +54,7 @@
         .attr('height', this.last ? (height + 50) : height)
         .append('g');
 
-      const data = this.complete(this.trend[this.term].term_counts);
+      const data = this.complete(this.trend[Object.keys(this.trend)[0]].term_counts);
 
       const xScale = d3.scaleTime()
         .domain([new Date(2002, 0, 1), new Date(2016, 12, 31)])

@@ -11,8 +11,8 @@
         <label>Search for a term</label>
       </div>
 
-      <button class="primary" @click="doSearch">Search!</button>
-      <button class="secondary" @click="inputQuery = ''">Reset!</button>
+      <button class="primary" @click="doSearch">Search</button>
+      <button class="secondary" @click="discardSearch">Reset</button>
 
       <div class="search-button first">
         <i class="fa fa-search"></i>
@@ -56,11 +56,11 @@
 
 <script type="text/javascript">
   import { mapGetters, mapMutations } from 'vuex';
-  import * as _ from 'lodash';
+  // import * as _ from 'lodash';
   // import abstracts from './Abstracts.vue';
   // import filters from './Filters.vue';
   import lucene from '../services/lucene';
-  import router from '../router';
+  // import router from '../router';
   // import eventHub from '../services/eventHub';
 
   export default {
@@ -76,22 +76,22 @@
       };
     },
     watch: {
-      urlQuery() {
-        if (this.$route.query.query) {
-          this.inputQuery = this.$route.query.query;
-          this.addFilter({
-            term: this.inputQuery,
-            type: 'query',
-          });
-        }
-        // eventHub.$emit('query', this.inputQuery);
-      },
+      // urlQuery() {
+      //   if (this.$route.query.query) {
+      //     this.inputQuery = this.$route.query.query;
+      //     this.addFilter({
+      //       term: this.inputQuery,
+      //       type: 'query',
+      //     });
+      //   }
+      //   // eventHub.$emit('query', this.inputQuery);
+      // },
     },
     computed: {
-      urlQuery() {
-        console.log(`query in url... ${this.$route.query.query}`);
-        return this.$route.query.query;
-      },
+      // urlQuery() {
+      //   console.log(`query in url... ${this.$route.query.query}`);
+      //   return this.$route.query.query;
+      // },
       searchWidth() {
         const w = (this.inputQuery.length * 7.5);
         if (w < 150) {
@@ -142,16 +142,17 @@
         this.doSearch();
       },
       clickHandler() {
-        const currQuery = _.clone(this.$route.query);
-        router.push({
-          path: 'publications',
-          query: {
-            ...currQuery,
-            query: this.inputQuery,
-          },
-        });
+        // const currQuery = _.clone(this.$route.query);
+        // router.push({
+        //   path: 'publications',
+        //   query: {
+        //     ...currQuery,
+        //     query: this.inputQuery,
+        //   },
+        // });
 
         // Changing the Vuex store...
+        this.removeAllFilters();
         this.addFilter({
           term: this.inputQuery,
           type: 'query',
@@ -163,8 +164,14 @@
         // this.searchQuery = this.inputQuery;
         // eventHub.$emit('query', this.inputQuery);
       },
+      discardSearch() {
+        // Changing the Vuex store...
+        this.inputQuery = '';
+        this.removeAllFilters();
+      },
       ...mapMutations('filters', [
         'addFilter',
+        'removeAllFilters',
       ]),
     },
   };

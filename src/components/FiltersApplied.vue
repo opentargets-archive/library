@@ -5,8 +5,6 @@
         v-for="(filter, index) in filters"
         :key="index"
         :filter="filter"
-        @addFilterToSearch="addFilterToSearch"
-        @setFilterAsQuery="setFilterAsQuery"
       >
       <!--@removeFilter="removeFilter"-->
       </filter-pill>
@@ -14,7 +12,8 @@
   </div>
 </template>
 <script>
-  import { mapGetters, mapMutations } from 'vuex';
+  // import { mapGetters, mapMutations } from 'vuex';
+  import { mapGetters } from 'vuex';
   // import * as filters from '../services/filters';
   import FilterPill from './FilterPill.vue';
   // import eventHub from '../services/eventHub';
@@ -49,21 +48,21 @@
       },
     },
     methods: {
-      addFilterToSearch(who) {
+      // addFilterToSearch(who) {
         // relay, why it is not propagated up?
-        this.$emit('addFilterToSearch', who);
-      },
+        // this.$emit('addFilterToSearch', who);
+      // },
 //      removeFilter(who) {
 //        filters.remove(who);
 //        this.filters = filters.getAll();
 //        this.$emit('removeFilter', who);
 //      },
-      setFilterAsQuery(who) {
-        this.$emit('setFilterAsQuery', who);
-      },
-      ...mapMutations('filters', [
-        'addFilter',
-      ]),
+//       setFilterAsQuery(who) {
+//         this.$emit('setFilterAsQuery', who);
+//       },
+//       ...mapMutations('filters', [
+//         'addFilter',
+//       ]),
     },
     computed: {
       ...mapGetters('filters', [

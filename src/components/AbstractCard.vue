@@ -62,6 +62,11 @@
         <!--<div @mouseup="selectAbstractText" class="paper-abstract-full">-->
           <!--<span class="abstract">{{abstractMarked}}</span>-->
           <span :id="abstractDomId" class="abstract"></span>
+          <span data-entity="GENE">Gene</span>
+          <span data-entity="DISEASE">Disease</span>
+          <span data-entity="DRUG">Drug</span>
+          <span data-entity="TARGET&DISEASE">Target and disease</span>
+
           <q-context-menu ref="selectedText">
             <selection-tooltip @addSelectionToQuery="addSelectionToQuery"
                                @setSelectionAsQuery="setSelectionAsQuery"
@@ -284,7 +289,6 @@
 
 <style lang="scss">
   $lighter-color: #777777;
-
   .paper-show-more-or-less {
     color: #2e9dfd;
     font-size: 0.8em;
@@ -294,17 +298,14 @@
       cursor: text;
     }
   }
-
   .paper-pmid {
     font-size: 0.8em;
     color: $lighter-color;
     margin-bottom: 1em;
   }
-
   .paper-authors {
     margin-top: 0.5em;
   }
-
   .paper-journal {
     .paper-year {
       font-weight: bold;
@@ -315,7 +316,6 @@
     margin-top: 0.2em;
     margin-bottom: 0.2em;
   }
-
   .similar-paper {
     margin-bottom: 10px;
     .similar-paper-title {
@@ -323,7 +323,6 @@
       cursor: pointer;
     }
   }
-
   .paper-abstract-short {
     position: relative;
   }
@@ -339,7 +338,6 @@
     );
     pointer-events: none; /* so the text is still selectable */
   }
-
   .subsection {
     margin-top: 20px;
     font-size: 0.8em;
@@ -349,283 +347,231 @@
       margin-bottom: 10px;
     }
   }
-
-  /* Marks */
-  .select-wrapper input.select-dropdown {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    -webkit-user-select: none;
-  }
-
   .entities {
-    line-height: 2;
-    margin-bottom: 2em;
-    padding: 0.25em 0.35em;
-    margin: 0px 0.25em;
-    /*      border-radius: 0.25em; */
-
+    line-height: 1.5em;
   }
-
-  .abstract {
-    line-height: 2;
-    margin-bottom: 2em;
-    padding: 0.25em 0.35em;
-    margin: 0px 0.25em;
-    /*      border-radius: 0.25em; */
-
-  }
-
-  [data-entity] {
-    padding: 0.25em 0.35em;
+  @mixin entity() {
+    padding: 0.15em 0.15em;
     margin: 0px 0.25em;
     line-height: 1;
     display: inline-block;
     border-radius: 0.25em;
     border: 1px solid;
   }
-
-  [data-entity]::after {
+  @mixin entity-after() {
     box-sizing: border-box;
-    content: attr(data-entity) " | " attr(reference-db);
+    /*content: attr(data-entity) " | " attr(reference-db);*/
     font-size: 0.6em;
     line-height: 1;
-    padding: 0.35em;
-    border-radius: 0.35em;
+    padding: 0.25em;
+    border-radius: 0.25em;
     text-transform: uppercase;
     display: inline-block;
     vertical-align: middle;
     margin: 0px 0px 0.1rem 0.5rem;
   }
-
-  [data-entity][data-entity="GENE"] {
-    background: rgba(166, 226, 45, 0.2);
-    border-color: rgb(166, 226, 45);
+  [data-entity="DISEASE"] {
+    @include entity();
   }
-
-  [data-entity][data-entity="GENE"]::after {
-    background: rgb(166, 226, 45);
+  [data-entity="GENE"] {
+    @include entity();
   }
-
-  [data-entity][data-entity="TARGET"] {
-    background: rgba(196, 146, 145, 0.2);
-    border-color: rgb(196, 146, 145);
+  [data-entity="TARGET&DISEASE"] {
+    @include entity();
   }
-
-  [data-entity][data-entity="TARGET"]::after {
-    background: rgb(196, 146, 145);
+  [data-entity="DRUG"] {
+    @include entity();
   }
-
-  [data-entity][data-entity="ORGANISM"] {
+  [data-entity="DISEASE"]::after {
+    @include entity-after();
+  }
+  [data-entity="GENE"]::after {
+    @include entity-after();
+  }
+  [data-entity="TARGET&DISEASE"]::after {
+    @include entity-after();
+  }
+  [data-entity="DRUG"]::after {
+    @include entity-after();
+  }
+  /*[data-entity][data-entity="GENE"] {*/
+  /*background: rgba(166, 226, 45, 0.2);*/
+  /*border-color: rgb(166, 226, 45);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"]::after {*/
+  /*background: rgb(166, 226, 45);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"] {*/
+  /*background: rgba(196, 146, 145, 0.2);*/
+  /*border-color: rgb(196, 146, 145);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"]::after {*/
+  /*background: rgb(196, 146, 145);*/
+  /*}*/
+  [data-entity][data-entity="DRUG"] {
     background: rgba(224, 0, 132, 0.2);
     border-color: rgb(224, 0, 132);
   }
-
-  [data-entity][data-entity="ORGANISM"]::after {
+  [data-entity][data-entity="DRUG"]::after {
     background: rgb(224, 0, 132);
   }
-
-  [data-entity][data-entity="DIAGNOSTICS"] {
-    background: rgba(67, 198, 102, 0.2);
-    border-color: rgb(67, 198, 102);
-  }
-
-  [data-entity][data-entity="DIAGNOSTICS"]::after {
-    background: rgb(67, 198, 102);
-  }
-
+  /*[data-entity][data-entity="DRUG"] {*/
+  /*background: rgba(67, 198, 102, 0.2);*/
+  /*border-color: rgb(67, 198, 102);*/
+  /*}*/
+  /*[data-entity][data-entity="DRUG"]::after {*/
+  /*background: rgb(67, 198, 102);*/
+  /*}*/
   [data-entity][data-entity="DISEASE"] {
     background: rgba(67, 198, 252, 0.2);
     border-color: rgb(67, 198, 252);
   }
-
   [data-entity][data-entity="DISEASE"]::after {
     background: rgb(67, 198, 252);
   }
-
-  [data-entity][data-entity="CHEMICAL"] {
-    background: rgba(253, 151, 32, 0.2);
-    border-color: rgb(253, 151, 32);
-  }
-
-  [data-entity][data-entity="CHEMICAL"]::after {
-    background: rgb(253, 151, 32);
-  }
-
-  [data-entity][data-entity="ANATOMY"] {
-    background: rgba(253, 151, 32, 0.2);
-    border-color: rgb(253, 151, 32);
-  }
-
-  [data-entity][data-entity="ANATOMY"]::after {
-    background: rgb(253, 151, 32);
-  }
-
-  [data-entity][data-entity="NAMEDGROUP"] {
-    background: rgba(142, 125, 255, 0.2);
-    border-color: rgb(142, 125, 255);
-  }
-
-  [data-entity][data-entity="NAMEDGROUP"]::after {
-    background: rgb(142, 125, 255);
-  }
-
-  [data-entity][data-entity="PROCESS"] {
-    background: rgba(255, 204, 0, 0.2);
-    border-color: rgb(255, 204, 0);
-  }
-
-  [data-entity][data-entity="PROCESS"]::after {
-    background: rgb(255, 204, 0);
-  }
-
-  [data-entity][data-entity="PSICHIATRY"] {
-    background: rgba(255, 204, 0, 0.2);
-    border-color: rgb(255, 204, 0);
-  }
-
-  [data-entity][data-entity="PSICHIATRY"]::after {
-    background: rgb(255, 204, 0);
-  }
-
-  [data-entity][data-entity="PHENOTYPE"] {
-    background: rgba(255, 204, 0, 0.2);
-    border-color: rgb(255, 204, 0);
-  }
-
-  [data-entity][data-entity="PHENOTYPE"]::after {
-    background: rgb(255, 204, 0);
-  }
-
-  [data-entity][data-entity="INFORMATIONSCIENCE"] {
-    background: rgba(47, 187, 171, 0.2);
-    border-color: rgb(47, 187, 171);
-  }
-
-  [data-entity][data-entity="INFORMATIONSCIENCE"]::after {
-    background: rgb(47, 187, 171);
-  }
-
-  [data-entity][data-entity="DISCIPLINE"] {
-    background: rgba(47, 187, 171, 0.2);
-    border-color: rgb(47, 187, 171);
-  }
-
-  [data-entity][data-entity="DISCIPLINE"]::after {
-    background: rgb(47, 187, 171);
-  }
-
-  [data-entity][data-entity="ANTROPOLOGY"] {
-    background: rgba(153, 153, 153, 0.2);
-    border-color: rgb(153, 153, 153);
-  }
-
-  [data-entity][data-entity="ANTROPOLOGY"]::after {
-    background: rgb(153, 153, 153);
-  }
-
-  [data-entity][data-entity="HUMANITIES"] {
-    background: rgba(153, 153, 153, 0.2);
-    border-color: rgb(153, 153, 153);
-  }
-
-  [data-entity][data-entity="HUMANITIES"]::after {
-    background: rgb(153, 153, 153);
-  }
-
-  [data-entity][data-entity="HEALTHCARE"] {
-    background: rgba(153, 153, 153, 0.2);
-    border-color: rgb(153, 153, 153);
-  }
-
-  [data-entity][data-entity="HEALTHCARE"]::after {
-    background: rgb(153, 153, 153);
-  }
-
-  [data-entity][data-entity="TECHNOLOGY"] {
-    background: rgba(153, 153, 153, 0.2);
-    border-color: rgb(153, 153, 153);
-  }
-
-  [data-entity][data-entity="TECHNOLOGY"]::after {
-    background: rgb(153, 153, 153);
-
-  }
-
-  [data-entity][data-entity="PUBLICATION"] {
-    background: rgba(153, 153, 53, 0.2);
-    border-color: rgb(153, 153, 53);
-  }
-
-  [data-entity][data-entity="PUBLICATION"]::after {
-    background: rgb(153, 153, 53);
-
-  }
-
+  /*[data-entity][data-entity="CHEMICAL"] {*/
+  /*background: rgba(253, 151, 32, 0.2);*/
+  /*border-color: rgb(253, 151, 32);*/
+  /*}*/
+  /*[data-entity][data-entity="CHEMICAL"]::after {*/
+  /*background: rgb(253, 151, 32);*/
+  /*}*/
+  /*[data-entity][data-entity="ANATOMY"] {*/
+  /*background: rgba(253, 151, 32, 0.2);*/
+  /*border-color: rgb(253, 151, 32);*/
+  /*}*/
+  /*[data-entity][data-entity="ANATOMY"]::after {*/
+  /*background: rgb(253, 151, 32);*/
+  /*}*/
+  /*[data-entity][data-entity="NAMEDGROUP"] {*/
+  /*background: rgba(142, 125, 255, 0.2);*/
+  /*border-color: rgb(142, 125, 255);*/
+  /*}*/
+  /*[data-entity][data-entity="NAMEDGROUP"]::after {*/
+  /*background: rgb(142, 125, 255);*/
+  /*}*/
+  /*[data-entity][data-entity="PROCESS"] {*/
+  /*background: rgba(255, 204, 0, 0.2);*/
+  /*border-color: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PROCESS"]::after {*/
+  /*background: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PSICHIATRY"] {*/
+  /*background: rgba(255, 204, 0, 0.2);*/
+  /*border-color: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PSICHIATRY"]::after {*/
+  /*background: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PHENOTYPE"] {*/
+  /*background: rgba(255, 204, 0, 0.2);*/
+  /*border-color: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="PHENOTYPE"]::after {*/
+  /*background: rgb(255, 204, 0);*/
+  /*}*/
+  /*[data-entity][data-entity="INFORMATIONSCIENCE"] {*/
+  /*background: rgba(47, 187, 171, 0.2);*/
+  /*border-color: rgb(47, 187, 171);*/
+  /*}*/
+  /*[data-entity][data-entity="INFORMATIONSCIENCE"]::after {*/
+  /*background: rgb(47, 187, 171);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"] {*/
+  /*background: rgba(47, 187, 171, 0.2);*/
+  /*border-color: rgb(47, 187, 171);*/
+  /*}*/
+  /*[data-entity][data-entity="GENE"]::after {*/
+  /*background: rgb(47, 187, 171);*/
+  /*}*/
+  /*[data-entity][data-entity="ANTROPOLOGY"] {*/
+  /*background: rgba(153, 153, 153, 0.2);*/
+  /*border-color: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="ANTROPOLOGY"]::after {*/
+  /*background: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="HUMANITIES"] {*/
+  /*background: rgba(153, 153, 153, 0.2);*/
+  /*border-color: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="HUMANITIES"]::after {*/
+  /*background: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="HEALTHCARE"] {*/
+  /*background: rgba(153, 153, 153, 0.2);*/
+  /*border-color: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="HEALTHCARE"]::after {*/
+  /*background: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="TECHNOLOGY"] {*/
+  /*background: rgba(153, 153, 153, 0.2);*/
+  /*border-color: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="TECHNOLOGY"]::after {*/
+  /*background: rgb(153, 153, 153);*/
+  /*}*/
+  /*[data-entity][data-entity="PUBLICATION"] {*/
+  /*background: rgba(153, 153, 53, 0.2);*/
+  /*border-color: rgb(153, 153, 53);*/
+  /*}*/
+  /*[data-entity][data-entity="PUBLICATION"]::after {*/
+  /*background: rgb(153, 153, 53);*/
+  /*}*/
   [data-entity][data-entity="TARGET&DISEASE"] {
     background: rgba(105, 145, 243, 0.2);
     border-color: rgb(105, 145, 243);
     /*   display: inline; */
     border: 1px dashed;
   }
-
   [data-entity][data-entity="TARGET&DISEASE"]::after {
     background: rgb(105, 145, 243);
-
   }
-
-  [data-entity][data-entity="PATHWAY"] {
-    background: rgba(205, 85, 143, 0.2);
-    border-color: rgb(205, 85, 143);
-    /*   display: inline; */
-    border: 1px dashed;
-  }
-
-  [data-entity][data-entity="PATHWAY"]::after {
-    background: rgb(205, 85, 143);
-
-  }
-
-  [data-entity][data-entity="PROTEINCOMPLEX"] {
+  /*[data-entity][data-entity="PATHWAY"] {*/
+  /*background: rgba(205, 85, 143, 0.2);*/
+  /*border-color: rgb(205, 85, 143);*/
+  /*!*   display: inline; *!*/
+  /*border: 1px dashed;*/
+  /*}*/
+  /*[data-entity][data-entity="PATHWAY"]::after {*/
+  /*background: rgb(205, 85, 143);*/
+  /*}*/
+  [data-entity][data-entity="GENE"] {
     background: rgba(87, 227, 81, 0.2);
     border-color: rgb(87, 227, 81);
   }
-
-  [data-entity][data-entity="PROTEINCOMPLEX"]::after {
+  [data-entity][data-entity="GENE"]::after {
     background: rgb(87, 227, 81);
   }
-
-  [data-entity][data-entity="LOC"] {
-    background: rgba(180, 180, 180, 0.2);
-    border-color: rgb(180, 180, 180);
-  }
-
-  [data-entity][data-entity="LOC"]::after {
-    background: rgb(180, 180, 180);
-  }
-
-
-
+  /*[data-entity][data-entity="LOC"] {*/
+  /*background: rgba(180, 180, 180, 0.2);*/
+  /*border-color: rgb(180, 180, 180);*/
+  /*}*/
+  /*[data-entity][data-entity="LOC"]::after {*/
+  /*background: rgb(180, 180, 180);*/
+  /*}*/
   /*.selectedWordTitle {*/
-    /*padding: 5px;*/
-    /*background: #dddddd;*/
-    /*vertical-align: baseline;*/
-    /*.actions {*/
-      /*top: 2px;*/
-      /*right: 0px;*/
-      /*padding-left: 5px;*/
-      /*display: inline-block;*/
-      /*vertical-align: baseline;*/
-      /*> .action-item {*/
-        /*padding-right: 1px;*/
-        /*padding-top: 2px;*/
-        /*padding-bottom: 2px;*/
-        /*cursor: pointer;*/
-        /*> i {*/
-          /*vertical-align: baseline;*/
-        /*}*/
-      /*}*/
-    /*}*/
+  /*padding: 5px;*/
+  /*background: #dddddd;*/
+  /*vertical-align: baseline;*/
+  /*.actions {*/
+  /*top: 2px;*/
+  /*right: 0px;*/
+  /*padding-left: 5px;*/
+  /*display: inline-block;*/
+  /*vertical-align: baseline;*/
+  /*> .action-item {*/
+  /*padding-right: 1px;*/
+  /*padding-top: 2px;*/
+  /*padding-bottom: 2px;*/
+  /*cursor: pointer;*/
+  /*> i {*/
+  /*vertical-align: baseline;*/
+  /*}*/
+  /*}*/
+  /*}*/
   /*}*/
 </style>
+

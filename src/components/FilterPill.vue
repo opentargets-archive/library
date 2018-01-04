@@ -13,7 +13,8 @@
         </i>
       </span>
 
-      <span class="action-item search" @click="addFilterToSearch">
+      <!-- <span class="action-item search" @click="addFilterToSearch"> -->
+      <span class="action-item search">
         <i class="fa fa-search-plus">
           <q-tooltip
             anchor="center right"
@@ -24,7 +25,8 @@
         </i>
       </span>
 
-      <span class="action-item search" @click="setFilterAsQuery">
+      <!--<span class="action-item search" @click="setFilterAsQuery">-->
+      <span class="action-item search">
         <i class="fa fa-search">
           <q-tooltip
             anchor="center right"
@@ -51,17 +53,17 @@
       ...mapMutations('filters', {
         removeFilterFromStore: 'removeFilter',
       }),
-      addFilterToSearch() {
-        this.$emit('addFilterToSearch', this.filter);
-      },
+      // addFilterToSearch() {
+      //   this.$emit('addFilterToSearch', this.filter);
+      // },
       removeFilter() {
         // this.$emit('removeFilter', this.filter);
         // filters.remove(this.filter);
         this.removeFilterFromStore(this.filter);
       },
-      setFilterAsQuery() {
-        this.$emit('setFilterAsQuery', this.filter);
-      },
+      // setFilterAsQuery() {
+      //   this.$emit('setFilterAsQuery', this.filter);
+      // },
     },
     computed: {
       pillColor() {
