@@ -15,6 +15,7 @@
 
 
         <q-drawer-link icon="view_list" :to="publicationsUrl">Publications</q-drawer-link>
+        <q-drawer-link icon="date_range" :to="dateRangeUrl">Date range</q-drawer-link>
         <q-drawer-link icon="trending_up" :to="trendsUrl">Trends</q-drawer-link>
         <q-drawer-link icon="border_outer" :to="topicsUrl">Topics graph</q-drawer-link>
       </div>
@@ -57,6 +58,9 @@
       },
       publicationsUrl() {
         return `/publications?query=${this.commonQueryUrl}`;
+      },
+      dateRangeUrl() {
+        return `date-range?query=${this.commonQueryUrl}`;
       },
       trendsUrl() {
         return `/trends?query=${this.commonQueryUrl}`;

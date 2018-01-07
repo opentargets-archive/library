@@ -34,6 +34,11 @@ export default new VueRouter({
       component: load('Publications'),
     },
     {
+      name: 'dateRange',
+      path: '/date-range',
+      component: load('Daterange'),
+    },
+    {
       name: 'trends',
       path: '/trends',
       component: load('Trends'),
