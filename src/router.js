@@ -44,6 +44,11 @@ export default new VueRouter({
       component: load('Trends'),
     },
     {
+      name: 'topics',
+      path: '/topics',
+      component: load('resultsGraph'),
+    },
+    {
       name: 'error',
       path: '*',
       component: load('Error404'),

@@ -1,6 +1,5 @@
 <template>
   <div> <!-- Root -->
-    Hello, data range here
     <div v-show="svg">
       <div class="row gutter justify-stretch content-center text-center">
         <div v-bind:style="{ 'margin-left': margin + 'px', width: width + 'px' }" class="date-range-container">

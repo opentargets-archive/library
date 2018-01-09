@@ -99,6 +99,8 @@
     props: ['filters'],
     watch: {
       filters() {
+        console.log('all filters in publications...');
+        console.log(this.filters);
         this.acc = [];
         this.lastAbstract = '';
       },

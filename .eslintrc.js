@@ -25,6 +25,14 @@ module.exports = {
     // 'no-console': ["error", { allow: ["warn", "error"] }],
     'no-console': 0,
 
+    'import/extensions': ['error', 'never', {
+      js: 'never',
+      mjs: 'never',
+      jsx: 'never',
+    }],
+
+    'import/no-unresolved': 'off',
+
     // allow paren-less arrow functions
     'arrow-parens': 0,
     'one-var': 0,

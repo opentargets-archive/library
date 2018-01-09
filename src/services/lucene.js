@@ -15,7 +15,7 @@ export default {
         f.luceneQuery = luceneQuery;
         return luceneQuery;
       }
-      f.luceneQuery = `"${f.term}"`;
+      f.luceneQuery = `${f.term}`;
       return f.luceneQuery;
     });
     return [...filtersClean].join(' AND ');
