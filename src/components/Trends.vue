@@ -4,7 +4,7 @@
     <!-- Established trends -->
     <i id=trends-spinner  class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
 
-    <div class="not-found-message" v-show="establishedTrends.length + novelTrends.length + negativeTrends.length === 0">No trends found</div>
+    <div class="not-found-message" v-show="establishedTrends.length + novelTrends.length + negativeTrends.length === 0 && !loading">No trends found</div>
 
     <div class="row gutter wrap justify-stretch content-center text-center">
 
@@ -103,9 +103,6 @@
         axios.get(apiUrl)
           .then((resp) => {
             this.loading = false;
-            // this.setTrends({
-            //
-            // })
             this.centinel = 'updated';
             this.establishedTrends = resp.data.established_trends.slice(0, 10);
             this.novelTrends = resp.data.novel_trends.slice(0, 10);
@@ -113,7 +110,6 @@
           });
       },
       setTrend(trend) {
-        console.log('selecting trend... ', trend);
         this.addFilter({
           term: Object.keys(trend)[0],
           type: this.filterType,

@@ -17,6 +17,11 @@ export default {
     /* eslint no-param-reassign: 0 */
     addFilter(state, filter) {
       const currFilters = state.currFilters;
+      // Make sure the filter is quoted
+      if ((filter.term.charAt(0) !== '"') && (filter.term.charAt(filter.term.length - 1))) {
+        filter.term = `"${filter.term}"`;
+      }
+
       if (state.uniqueFields[filter.type]) {
         Vue.set(currFilters, filter.type, [filter]);
       }
