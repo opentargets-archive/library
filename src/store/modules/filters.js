@@ -16,15 +16,11 @@ export default {
   mutations: {
     /* eslint no-param-reassign: 0 */
     addFilter(state, filter) {
-      console.log('adding new filter...');
-      console.log(filter);
       const currFilters = state.currFilters;
       if (state.uniqueFields[filter.type]) {
-        console.log('unique filter...');
         Vue.set(currFilters, filter.type, [filter]);
       }
       else {
-        console.log('multi filter...');
         if (!state.currFilters[filter.type] || !state.currFilters[filter.type].length) {
           Vue.set(currFilters, filter.type, []);
         }
@@ -61,8 +57,6 @@ export default {
   },
   getters: {
     getAllFilters: state => {
-      console.log('get all filters called.... ********');
-      console.log(state.currFilters);
       let ftemp = [];
       Object.keys(state.currFilters).forEach((type) => {
         ftemp = [...ftemp, ...state.currFilters[type]];

@@ -138,6 +138,8 @@
       });
 
       const query = lucene.compose3(this.getAllFilters);
+      console.log(`query for graph is... ${query}`);
+      console.log(`unescaped query... ${decodeURI(query)}`);
 
       graph = otSearch()
         .width(this.width - 100)
@@ -167,22 +169,12 @@
           term: v.subject.term,
           node: v.subject,
         });
-        // this.$emit('addFilter', {
-        //   type: 'topic',
-        //   term: v.subject.term,
-        //   node: v.subject,
-        // });
       });
       graph.on('unselected', (v) => {
         // this.$emit('selected', v.selected);
         console.log('unselected event fired...');
         console.log(v);
         vueCtx.filtersToApply = vueCtx.filtersToApply.filter(f => f.term !== v.subject.term);
-        // this.$emit('removeFilter', {
-        //   type: 'topic',
-        //   term: v.subject.term,
-        //   node: v.subject,
-        // });
       });
       graph.on('topicSelected', (t) => {
         console.log('selected topic!!');
@@ -190,9 +182,9 @@
         // this.$emit('selectedTopic', t);
       });
       graph.on('topicUnselected', (t) => {
-        // this.$emit('selectedTopic', t);
         console.log('unselected topic!!');
         console.log(t);
+        // this.$emit('selectedTopic', t);
       });
     },
     watch: {

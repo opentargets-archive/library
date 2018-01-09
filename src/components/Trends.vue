@@ -4,6 +4,8 @@
     <!-- Established trends -->
     <i id=trends-spinner  class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
 
+    <div class="not-found-message" v-show="establishedTrends.length + novelTrends.length + negativeTrends.length === 0">No trends found</div>
+
     <div class="row gutter wrap justify-stretch content-center text-center">
 
       <div v-show="establishedTrends.length" class="width-1of3">
@@ -140,6 +142,9 @@
 </script>
 
 <style lang="scss">
+  .not-found-message {
+    margin: 10px;
+  }
   .trend-block {
     margin-bottom: 10px;
   }
