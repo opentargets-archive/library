@@ -28,7 +28,7 @@
         <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
       </div>
 
-      <div v-show="!showSpinner" class="topics-menu">
+      <div v-show="!showSpinner && !showFailed" class="topics-menu">
         <div
           class="topic-item"
           @click="topicVisible=!topicVisible"

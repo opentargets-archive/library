@@ -1,6 +1,6 @@
 <template>
   <span class="filter-pill" v-bind:style="{'background': pillColor}">
-    <span>{{filter.term}} | {{filter.type}}</span>
+    <span>{{filter.term}} | <span class="type">{{filter.type}}</span></span>
     <span class="actions">
       <span class="action-item remove" @click="removeFilter">
         <i class="fa fa-remove">
@@ -13,29 +13,27 @@
         </i>
       </span>
 
-      <!-- <span class="action-item search" @click="addFilterToSearch"> -->
-      <span class="action-item search">
-        <i class="fa fa-search-plus">
-          <q-tooltip
-            anchor="center right"
-            self="center left"
-            :offset="[10, 0]"
-          >Add this term to the search query
-          </q-tooltip>
-        </i>
-      </span>
+      <!--<span class="action-item search">-->
+        <!--<i class="fa fa-search-plus">-->
+          <!--<q-tooltip-->
+            <!--anchor="center right"-->
+            <!--self="center left"-->
+            <!--:offset="[10, 0]"-->
+          <!--&gt;Add this term to the search query-->
+          <!--</q-tooltip>-->
+        <!--</i>-->
+      <!--</span>-->
 
-      <!--<span class="action-item search" @click="setFilterAsQuery">-->
-      <span class="action-item search">
-        <i class="fa fa-search">
-          <q-tooltip
-            anchor="center right"
-            self="center left"
-            :offset="[10, 0]"
-          >Search for this term
-          </q-tooltip>
-        </i>
-      </span>
+      <!--<span class="action-item search">-->
+        <!--<i class="fa fa-search">-->
+          <!--<q-tooltip-->
+            <!--anchor="center right"-->
+            <!--self="center left"-->
+            <!--:offset="[10, 0]"-->
+          <!--&gt;Search for this term-->
+          <!--</q-tooltip>-->
+        <!--</i>-->
+      <!--</span>-->
 
     </span>
   </span>
@@ -81,17 +79,23 @@
     position:relative;
     padding-top: 2px;
     padding-bottom: 2px;
-    padding-right: 60px;
+    padding-right: 20px;
     padding-left: 5px;
     border-radius: $border-radius;
     -webkit-border-radiud: $border-radius;
     -moz-border-radiud: $border-radius;
+
+    .type {
+      font-size: 0.8em;
+      color: #333333;
+      vertical-align: baseline;
+    }
   }
 
   .actions {
     position: absolute;
     top: 2px;
-    right: 0px;
+    right: 2px;
     padding-left: 5px;
     display: inline-block;
     vertical-align: baseline;

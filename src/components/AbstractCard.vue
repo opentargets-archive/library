@@ -2,7 +2,7 @@
   <div> <!-- root -->
     <div>
       <div class="paper-title">
-        <a @click="setArticleAsQuery(pmid)" class="epmc_citation_link">{{title}}</a>
+        <a target="_blank" :href="epmcLink" class="epmc_citation_link">{{title}}</a>
       </div>
 
       <div @mouseup="selectText" class="paper-authors"
@@ -29,9 +29,7 @@
         </span>
 
         <q-context-menu ref="selectedText">
-          <selection-tooltip @addSelectionToQuery="addSelectionToQuery"
-                             @setSelectionAsQuery="setSelectionAsQuery"
-                             @addSelectionToFilter="addFilter"
+          <selection-tooltip @addSelectionToQuery="addSelectionFilter"
                              :selection="selectedText"
           ></selection-tooltip>
         </q-context-menu>
@@ -68,9 +66,7 @@
           <span data-entity="TARGET&DISEASE">Target and disease</span>
 
           <q-context-menu ref="selectedText">
-            <selection-tooltip @addSelectionToQuery="addSelectionToQuery"
-                               @setSelectionAsQuery="setSelectionAsQuery"
-                               @addSelectionToFilter="addFilter"
+            <selection-tooltip @addSelectionToQuery="addSelectionFilter"
                                :selection="selectedText"
             ></selection-tooltip>
           </q-context-menu>
@@ -139,22 +135,22 @@
       setArticleAsQuery(who) {
         this.setSelectionAsQuery(who);
       },
-      addFilter() {
-        console.log('adding filter...');
-        this.$emit('addFilter', {
-          type: 'selection',
-          term: this.selectedText,
-        });
+      // addFilter() {
+      //   console.log('adding filter...');
+      //   this.$emit('addFilter', {
+      //     type: 'selection',
+      //     term: this.selectedText,
+      //   });
+      // },
+      addSelectionFilter() {
+        // this.$emit('setFilterAsQuery', {
+        //   luceneQuery: `"${what}"`,
+        // });
       },
-      setSelectionAsQuery(what) {
-        this.$emit('setFilterAsQuery', {
-          luceneQuery: `"${what}"`,
-        });
-      },
-      addSelectionToQuery(what) {
-        this.$emit('addSelectionToQuery', {
-          luceneQuery: `"${what}"`,
-        });
+      addSelectionToQuery() {
+        // this.$emit('addSelectionToQuery', {
+        //   luceneQuery: `"${what}"`,
+        // });
       },
       selectText() {
         const selection = window.getSelection();

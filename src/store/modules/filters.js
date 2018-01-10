@@ -4,6 +4,14 @@ export default {
   namespaced: true,
   state: {
     currFilters: {},
+    quoted: {
+      query: true,
+      topic: true,
+      trends: true,
+      date: false,
+      term: true,
+      selection: true,
+    },
     uniqueFields: {
       query: true,
       topic: false,
@@ -17,9 +25,11 @@ export default {
     /* eslint no-param-reassign: 0 */
     addFilter(state, filter) {
       const currFilters = state.currFilters;
-      // Make sure the filter is quoted
-      if ((filter.term.charAt(0) !== '"') && (filter.term.charAt(filter.term.length - 1))) {
-        filter.term = `"${filter.term}"`;
+      // Make sure the filter is quoted (but not on date ranges
+      if (state.quoted[filter.type]) {
+        if ((filter.term.charAt(0) !== '"') && (filter.term.charAt(filter.term.length - 1))) {
+          filter.term = `"${filter.term}"`;
+        }
       }
 
       if (state.uniqueFields[filter.type]) {

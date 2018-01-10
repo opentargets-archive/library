@@ -23,9 +23,6 @@
     },
     methods: {
       setFilter(chip) {
-        console.log('setting a new filter...');
-        console.log(chip);
-        console.log(this.chipLabel);
         this.addFilter({
           term: chip[this.chipLabel],
           type: this.filterType,
