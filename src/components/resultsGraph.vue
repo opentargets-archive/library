@@ -1,10 +1,10 @@
 <template>
-  <!-- Display the results -->
-  <div class="row gutter wrap justify-stretch content-center"> <!-- root -->
-    <div class="prefilter-container" v-show="filtersToApply.length">Apply
-      <span v-if="filtersToApply.length === 1">this filter</span>
-      <span v-else>these filters</span>:
-      <span class="prefilter-pill" v-for="filter in filtersToApply">
+  <div>
+    <!-- Display the results -->
+  <div class="prefilter-container" v-show="filtersToApply.length">Apply
+    <span v-if="filtersToApply.length === 1">this filter</span>
+    <span v-else>these filters</span>:
+    <span class="prefilter-pill" v-for="filter in filtersToApply">
         <span class="prefilter-term">{{filter.term}}</span>
         <span><i class="fa fa-remove" @click="removePrefilter(filter)">
           <q-tooltip
@@ -16,10 +16,12 @@
 
         </i></span>
       </span>
-      <span class="apply-prefilters" @click="applyPrefilters">
+    <span class="apply-prefilters" @click="applyPrefilters">
         <i class="fa fa-check-circle-o"></i>
       </span>
-    </div>
+  </div>
+
+  <div class="row gutter wrap justify-stretch content-center"> <!-- root -->
 
     <div class="topics-container">
       <!--<p class="tip" v-if="query">Graph for <b>{{query}}</b></p>-->
@@ -48,6 +50,8 @@
       <div id="graphContainer"></div>
     </div>
   </div>
+  </div>
+
 </template>
 
 <script>
@@ -234,7 +238,7 @@
 
   .prefilter-container {
     position: absolute;
-    margin-top: 10px;
+    margin-top: 30px;
     margin-left: 10px;
   }
   .apply-prefilters {
