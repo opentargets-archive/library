@@ -22,6 +22,15 @@
       <!--<genes-facet v-if="facetSelected === 'diseases'" :chips="diseases" filterType="term"></genes-facet>-->
     </div>
 
+    <!-- Drugs facet -->
+    <div class="facet-section-container">
+      <span class="facet-section">Related drugs
+        <span v-if="facetSelected !== 'drugs'" @click="facetSelected='drugs'"><i class="fa fa-plus"></i></span>
+        <span v-if="facetSelected === 'drugs'" @click="facetSelected=null"><i class="fa fa-minus"></i></span>
+      </span>
+      <!--<genes-facet v-if="facetSelected === 'diseases'" :chips="diseases" filterType="term"></genes-facet>-->
+    </div>
+
     <!-- Top chunks -->
     <div class="facet-section-container">
       <span class="facet-section">Related terms
@@ -61,6 +70,9 @@
         if (this.facetSelected === 'diseases') {
           chipLabel = 'label';
         }
+        if (this.facetSelected === 'drugs') {
+          chipLabel = 'label';
+        }
         if (this.facetSelected === 'terms') {
           chipLabel = 'key';
         }
@@ -73,6 +85,9 @@
         }
         if (this.facetSelected === 'diseases') {
           chips = this.diseases;
+        }
+        if (this.facetSelected === 'drugs') {
+          chips = this.drugs;
         }
         if (this.facetSelected === 'terms') {
           chips = this.topChunks;
@@ -88,6 +103,7 @@
         this.genes = this.getAllAggs.genes.buckets;
         this.diseases = this.getAllAggs.diseases.buckets;
         this.topChunks = this.getAllAggs.top_chunks_significant_terms.buckets;
+        this.drugs = this.getAllAggs.drugs.buckets;
       },
     },
   };
@@ -100,6 +116,7 @@
     margin-left: 20px;
     .facet-section-container {
       display: inline-block;
+      margin-right: 20px;
       background-color: floralwhite;
       padding: 2px;
       .facet-section {

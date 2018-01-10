@@ -36,6 +36,7 @@
 
 <style lang="scss">
   .chips-container {
+    margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
     white-space: normal;
