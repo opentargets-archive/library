@@ -1,6 +1,5 @@
 <template>
   <div class="chips-container" v-show="chips.length"> <!-- Root -->
-
     <!-- chips -->
     <span class="chip" v-for="chip in chips" @click="setFilter(chip)">
       <span class="chip-text">{{chip[chipLabel]}} </span>

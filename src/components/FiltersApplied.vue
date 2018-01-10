@@ -12,7 +12,6 @@
   </div>
 </template>
 <script>
-  // import { mapGetters, mapMutations } from 'vuex';
   import { mapGetters } from 'vuex';
   // import * as filters from '../services/filters';
   import FilterPill from './FilterPill.vue';

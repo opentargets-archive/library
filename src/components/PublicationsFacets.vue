@@ -1,24 +1,37 @@
 <template>
-  <div> <!-- Root -->
+  <div class="publications-facet"> <!-- Root -->
 
+    <!--<div class="facet-title">-->
+      <!--Show related...:-->
+    <!--</div>-->
     <!-- Genes facet -->
-    <div>
-      <span>Related genes: </span>
-      <genes-facet :chips="genes" filterType="term"></genes-facet>
+    <div class="facet-section-container">
+      <span class="facet-section">Related genes
+        <span v-if="facetSelected !== 'genes'" @click="facetSelected='genes'"><i class="fa fa-plus"></i></span>
+        <span v-if="facetSelected === 'genes'" @click="facetSelected=null"><i class="fa fa-minus"></i></span>
+      </span>
+      <!--<genes-facet v-if="facetSelected==='genes'" :chips="genes" filterType="term"></genes-facet>-->
     </div>
 
     <!-- Diseases facet -->
-    <div>
-      <span>Related diseases: </span>
-      <genes-facet :chips="diseases" filterType="term"></genes-facet>
+    <div class="facet-section-container">
+      <span class="facet-section">Related diseases
+        <span v-if="facetSelected !== 'diseases'" @click="facetSelected='diseases'"><i class="fa fa-plus"></i></span>
+        <span v-if="facetSelected === 'diseases'" @click="facetSelected=null"><i class="fa fa-minus"></i></span>
+      </span>
+      <!--<genes-facet v-if="facetSelected === 'diseases'" :chips="diseases" filterType="term"></genes-facet>-->
     </div>
 
     <!-- Top chunks -->
-    <div>
-      <span>Related terms:</span>
-      <genes-facet :chips="topChunks" filterType="term" chipLabel="key"></genes-facet>
+    <div class="facet-section-container">
+      <span class="facet-section">Related terms
+        <span v-if="facetSelected !== 'terms'" @click="facetSelected='terms'"><i class="fa fa-plus"></i></span>
+        <span v-if="facetSelected === 'terms'" @click="facetSelected=null"><i class="fa fa-minus"></i></span>
+      </span>
+      <!--<genes-facet v-if="facetSelected === 'terms'" :chips="topChunks" filterType="term" chipLabel="key"></genes-facet>-->
     </div>
 
+    <genes-facet v-if="facetSelected" :chips="chips" filterType="term" :chipLabel="chipLabel"></genes-facet>
   </div>
 
 </template>
@@ -33,12 +46,39 @@
     },
     data() {
       return {
+        facetSelected: null,
         genes: [],
         diseases: [],
         topChunks: [],
       };
     },
     computed: {
+      chipLabel() {
+        let chipLabel;
+        if (this.facetSelected === 'genes') {
+          chipLabel = 'label';
+        }
+        if (this.facetSelected === 'diseases') {
+          chipLabel = 'label';
+        }
+        if (this.facetSelected === 'terms') {
+          chipLabel = 'key';
+        }
+        return chipLabel;
+      },
+      chips() {
+        let chips;
+        if (this.facetSelected === 'genes') {
+          chips = this.genes;
+        }
+        if (this.facetSelected === 'diseases') {
+          chips = this.diseases;
+        }
+        if (this.facetSelected === 'terms') {
+          chips = this.topChunks;
+        }
+        return chips;
+      },
       ...mapGetters('aggs', {
         getAllAggs: 'getAllAggs',
       }),
@@ -52,3 +92,22 @@
     },
   };
 </script>
+
+<style lang="scss">
+  .publications-facet {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    .facet-section-container {
+      display: inline-block;
+      background-color: floralwhite;
+      padding: 2px;
+      .facet-section {
+        i {
+          cursor: pointer;
+          font-size: 0.7em;
+        }
+      }
+    }
+  }
+</style>

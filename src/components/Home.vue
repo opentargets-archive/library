@@ -2,7 +2,7 @@
   <div><!-- Root -->
      <div class="salute vertical-middle" style="width:500px">
       <h5>Welcome to Open Targets | Library</h5>
-      <div class="subheader">This site allows to mine all the Pubmed articles in real time.</div>
+      <div class="subheader">This site allows to mine all the Pubmed articles.</div>
       <div>Some tips:</div>
       <div>
         <ul>

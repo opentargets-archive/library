@@ -4,7 +4,7 @@
     <abstracts
       :filters="filters"
     ></abstracts>
-    {{getAllFilters}}
+    <!--{{getAllFilters}}-->
     <!--@addFilterToSearch="addSearchTerm"-->
     <!--@removeFilter="removeFilter"-->
     <!--@setFilterAsQuery="setFilterAsQuery"-->
