@@ -16,6 +16,7 @@
   import { mapGetters } from 'vuex';
   import abstracts from './Abstracts.vue';
   import pubFacets from './PublicationsFacets.vue';
+  import router from '../router';
   //  import * as filters from '../services/filters';
   //  import eventHub from '../services/eventHub';
 
@@ -36,7 +37,15 @@
     },
     watch: {
       getAllFilters() {
-        this.filters = this.getAllFilters;
+        if (!this.getAllFilters.length) {
+          router.push({
+            path: '/',
+            query: '',
+          });
+        }
+        else {
+          this.filters = this.getAllFilters;
+        }
       },
     },
     mounted() {

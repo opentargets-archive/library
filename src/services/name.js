@@ -5,4 +5,4 @@
  * 3. Note that this won't change the domain name :-)
  */
 export const name = 'Library';
-export const version = 'alpha-2';
+export const version = 'alpha-3';

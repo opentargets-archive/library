@@ -202,8 +202,8 @@
           this.sumPapersPerYear += this.papersPerYear[i];
         }
       },
-      data() {
-      },
+      // data() {
+      // },
     },
   };
 </script>

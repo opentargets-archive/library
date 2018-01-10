@@ -112,7 +112,6 @@
         const params = {};
         const hashes = url.slice(pos + 1).split('&');
 
-        console.log(hashes);
         for (let i = 0; i < hashes.length; i += 1) {
           const hash = hashes[i].split('=');
           params[hash[0]] = decodeURI(hash[1]) || null;

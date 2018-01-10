@@ -53,7 +53,6 @@
   import lucene from '../services/lucene';
   import apiBaseUrl from '../services/api';
 
-
   // const apiBaseUrl = 'https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/search';
   // const apiBaseUrl = 'https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev/search';
 
