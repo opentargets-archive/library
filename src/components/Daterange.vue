@@ -39,7 +39,6 @@
 
   export default {
     name: 'date-range',
-    // props: ['data', 'width', 'loading'],
     data() {
       return {
         papersPerYear: {},
@@ -66,11 +65,6 @@
           type: 'date',
           term: `${this.yearSelection.min}-${this.yearSelection.max}`,
         });
-
-        // this.$emit('addFilter', {
-        //   type: 'date',
-        //   term: `${this.yearSelection.min}-${this.yearSelection.max}`,
-        // });
       },
       getPapersPerYear() {
         const ppy = {};
@@ -112,7 +106,6 @@
         .range([0, histWidth]);
 
       const barWidth = xScale(this.maxYear) - xScale(this.maxYear - 1);
-      // histWidth = (this.width - 30) + ((xScale(this.maxYear) - xScale(this.maxYear - 1)) / 2);
       histWidth = (this.width - 40);
       xScale.range([0, histWidth]);
 
@@ -166,10 +159,6 @@
         .text((d) => `${d.doc_count} ${d.doc_count > 1 ? 'documents' : 'document'} (${d.year})`);
     },
     computed: {
-      // usedWidth() {
-      //   /* eslint no-bitwise: 0 */
-      //   return ~~(this.width * 0.8);
-      // },
       margin() {
         /* eslint no-bitwise: 0 */
         return ~~((this.width - (this.width * 0.8)) / 2) - 20;
@@ -184,9 +173,6 @@
         const range = dropWhile(rangeWithYear, (d) => (d.doc_count === 0) || d.year === 1800);
         return range;
       },
-      // ...mapGetters('filters', {
-      //   getAllFilters: 'getAllFilters',
-      // }),
       ...mapGetters('aggs', {
         getAggs: 'getAllAggs',
       }),
@@ -202,8 +188,6 @@
           this.sumPapersPerYear += this.papersPerYear[i];
         }
       },
-      // data() {
-      // },
     },
   };
 </script>

@@ -29,8 +29,7 @@
         </span>
 
         <q-context-menu ref="selectedText">
-          <selection-tooltip @addSelectionToQuery="addSelectionFilter"
-                             :selection="selectedText"
+          <selection-tooltip :selection="selectedText"
           ></selection-tooltip>
         </q-context-menu>
       </div>
@@ -43,22 +42,18 @@
         <span class="paper-pages">{{pages}}</span>
       </div>
 
-      <!--<div class="paper-pmid">PMID: {{pmid}}</div>-->
-
       <!-- Pills with more details -->
-      <span v-show="showFull==false && abstractText" @click="showFull=true; showAbstract();" class="paper-show-more-or-less">[Show abstract]</span>
+      <span v-show="showFull===false && abstractText" @click="showFull=true; showAbstract();" class="paper-show-more-or-less">[Show abstract]</span>
       <span v-show="!abstractText" class="paper-show-more-or-less inactive">[No abstract available]</span>
-      <span v-show="showFull==true" @click="showFull=false" class="paper-show-more-or-less">[Hide abstract]</span>
+      <span v-show="showFull===true" @click="showFull=false" class="paper-show-more-or-less">[Hide abstract]</span>
 
-      <span v-show="showSimilar==false" @click="showSimilar=true; searchSimilar();" class="paper-show-more-or-less">[Show similar articles]</span>
-      <span v-show="showSimilar==true" @click="showSimilar=false" class="paper-show-more-or-less">[Hide similar articles]</span>
+      <span v-show="showSimilar===false" @click="showSimilar=true; searchSimilar();" class="paper-show-more-or-less">[Show similar articles]</span>
+      <span v-show="showSimilar===true" @click="showSimilar=false" class="paper-show-more-or-less">[Hide similar articles]</span>
 
       <!-- Abstract -->
       <div class="subsection" v-show="showFull">
         <div v-show="loadingAbstract"><i class="fa fa-spinner fa-spin"></i></div>
         <div @contextmenu="selectText" class="paper-abstract-full">
-        <!--<div @mouseup="selectAbstractText" class="paper-abstract-full">-->
-          <!--<span class="abstract">{{abstractMarked}}</span>-->
           <span :id="abstractDomId" class="abstract"></span>
           <span data-entity="GENE">Gene</span>
           <span data-entity="DISEASE">Disease</span>
@@ -66,8 +61,7 @@
           <span data-entity="TARGET&DISEASE">Target and disease</span>
 
           <q-context-menu ref="selectedText">
-            <selection-tooltip @addSelectionToQuery="addSelectionFilter"
-                               :selection="selectedText"
+            <selection-tooltip :selection="selectedText"
             ></selection-tooltip>
           </q-context-menu>
 
@@ -98,7 +92,6 @@
   import selectionTooltip from './SelectionTooltip.vue';
   import apiBaseUrl from '../services/api';
 
-  console.log(`apiBaseUrl... ${apiBaseUrl}`);
   /* eslint no-underscore-dangle: 0 */
   export default {
     name: 'abstract-card',
@@ -134,23 +127,6 @@
       },
       setArticleAsQuery(who) {
         this.setSelectionAsQuery(who);
-      },
-      // addFilter() {
-      //   console.log('adding filter...');
-      //   this.$emit('addFilter', {
-      //     type: 'selection',
-      //     term: this.selectedText,
-      //   });
-      // },
-      addSelectionFilter() {
-        // this.$emit('setFilterAsQuery', {
-        //   luceneQuery: `"${what}"`,
-        // });
-      },
-      addSelectionToQuery() {
-        // this.$emit('addSelectionToQuery', {
-        //   luceneQuery: `"${what}"`,
-        // });
       },
       selectText() {
         const selection = window.getSelection();
@@ -193,9 +169,6 @@
             vueCtx.loadingSimilarArticles = false;
             this.similar = resp.data.hits.hits.map((p) => {
               p.title = p._source.title;
-//              if (p.title.length > 120) {
-//                p.title = `${p.title.substr(0, 120)}...`;
-//              }
               const authorNames = p._source.authors.map((d) => this.parseAuthor(d));
               if (authorNames.length === 1) {
                 return authorNames[0];

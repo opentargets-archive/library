@@ -13,28 +13,6 @@
         </i>
       </span>
 
-      <!--<span class="action-item search">-->
-        <!--<i class="fa fa-search-plus">-->
-          <!--<q-tooltip-->
-            <!--anchor="center right"-->
-            <!--self="center left"-->
-            <!--:offset="[10, 0]"-->
-          <!--&gt;Add this term to the search query-->
-          <!--</q-tooltip>-->
-        <!--</i>-->
-      <!--</span>-->
-
-      <!--<span class="action-item search">-->
-        <!--<i class="fa fa-search">-->
-          <!--<q-tooltip-->
-            <!--anchor="center right"-->
-            <!--self="center left"-->
-            <!--:offset="[10, 0]"-->
-          <!--&gt;Search for this term-->
-          <!--</q-tooltip>-->
-        <!--</i>-->
-      <!--</span>-->
-
     </span>
   </span>
 </template>
@@ -42,26 +20,17 @@
 <script>
   import { mapMutations } from 'vuex';
   import pillColors from '../services/pillColors';
-  // import * as filters from '../services/filters';
 
   export default {
     name: 'filter-pill',
     props: ['filter'],
     methods: {
+      removeFilter() {
+        this.removeFilterFromStore(this.filter);
+      },
       ...mapMutations('filters', {
         removeFilterFromStore: 'removeFilter',
       }),
-      // addFilterToSearch() {
-      //   this.$emit('addFilterToSearch', this.filter);
-      // },
-      removeFilter() {
-        // this.$emit('removeFilter', this.filter);
-        // filters.remove(this.filter);
-        this.removeFilterFromStore(this.filter);
-      },
-      // setFilterAsQuery() {
-      //   this.$emit('setFilterAsQuery', this.filter);
-      // },
     },
     computed: {
       pillColor() {
@@ -107,12 +76,6 @@
       > i {
         vertical-align: baseline;
       }
-      /*&.search {*/
-        /*background-color: #64b5f7;*/
-      /*}*/
-      /*&.remove {*/
-        /*background-color: orange;*/
-      /*}*/
     }
   }
 

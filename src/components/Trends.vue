@@ -55,8 +55,8 @@
   import trendLine from './TrendTimeline.vue';
   import apiBaseUrl from '../services/api';
 
+  /* eslint no-bitwise: 0 */
   export default {
-    // props: ['query', 'width', 'height'],
     components: {
       'trend-timeline': trendLine,
     },
@@ -76,10 +76,6 @@
       ...mapGetters('filters', {
         getAllFilters: 'getAllFilters',
       }),
-      /* eslint no-bitwise: 0 */
-      // trendLineWidth() {
-      //   return ~~(this.width / 3);
-      // },
     },
     methods: {
       getData() {
@@ -97,7 +93,6 @@
         const query = lucene.compose3(this.getAllFilters);
 
         const baseUrl = `${apiBaseUrl}trends?query=`;
-        // const baseUrl = 'https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/trends?query=';
         const apiUrl = `${baseUrl}${query}`;
         console.log(`query for trends... ${apiUrl}`);
         axios.get(apiUrl)
@@ -114,11 +109,6 @@
           term: Object.keys(trend)[0],
           type: this.filterType,
         });
-
-        // this.$emit('addFilter', {
-        //   type: 'trend',
-        //   term: Object.keys(trend)[0],
-        // });
       },
       ...mapMutations('filters', [
         'addFilter',
@@ -129,7 +119,6 @@
       this.getData();
     },
     watch: {
-      // query() {
       getAllFilters() {
         this.getData();
       },

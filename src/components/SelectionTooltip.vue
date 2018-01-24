@@ -15,29 +15,6 @@
           </q-tooltip>
         </i>
       </span>
-
-      <!--<span class="action-item search" @click="addSelectionToQuery">-->
-        <!--<i class="fa fa-search-plus">-->
-          <!--<q-tooltip-->
-            <!--anchor="center right"-->
-            <!--self="center left"-->
-            <!--:offset="[10, 0]"-->
-          <!--&gt;Add selected text to the search query-->
-          <!--</q-tooltip>-->
-        <!--</i>-->
-      <!--</span>-->
-
-      <!--<span class="action-item search" @click="setSelectionAsQuery">-->
-        <!--<i class="fa fa-search">-->
-          <!--<q-tooltip-->
-            <!--anchor="center right"-->
-            <!--self="center left"-->
-            <!--:offset="[10, 0]"-->
-          <!--&gt;Search for this text-->
-          <!--</q-tooltip>-->
-        <!--</i>-->
-      <!--</span>-->
-
     </div>
   </div>
 </template>
@@ -50,18 +27,10 @@
     props: ['selection'],
     methods: {
       addSelectionToFilter() {
-        console.log('add selection to filter...');
         this.addFilter({
           type: 'selection',
           term: this.selection,
         });
-        // this.$emit('addSelectionToFilter', this.selection);
-      },
-      addSelectionToQuery() {
-        // this.$emit('addSelectionToQuery', this.selection);
-      },
-      setSelectionAsQuery() {
-        // this.$emit('setSelectionAsQuery', this.selection);
       },
       ...mapMutations('filters', [
         'addFilter',

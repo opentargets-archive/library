@@ -24,7 +24,6 @@
   <div class="row gutter wrap justify-stretch content-center"> <!-- root -->
 
     <div class="topics-container">
-      <!--<p class="tip" v-if="query">Graph for <b>{{query}}</b></p>-->
 
       <div v-show="showSpinner">
         <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
@@ -61,15 +60,9 @@
   import lucene from '../services/lucene';
 
 
-  let graph; // The graph
+  let graph;
   export default {
     name: 'results-graph',
-    // props: [
-    //   'query',
-    //   'width',
-    //   'height',
-    //   'removedFilter',
-    // ],
     data() {
       return {
         width: 200,
@@ -84,16 +77,6 @@
       };
     },
     computed: {
-      // compoundProperty is made to watch for both properties (query and fields) since Vue.js doesn't have a watchGroup or similar
-      // compoundProperty() {
-        /* eslint no-unused-expressions: 0 */
-        // Only need to reference the properties
-        // this.query;
-        // this.fields;
-
-        // different value every time to make sure the watch on this property is fired
-        // return Date.now();
-      // },
       ...mapGetters('filters', [
         'getAllFilters',
       ]),
@@ -142,9 +125,6 @@
       });
 
       const query = lucene.compose3(this.getAllFilters);
-      console.log(`query for graph is... ${query}`);
-      console.log(`unescaped query... ${decodeURI(query)}`);
-
       graph = otSearch()
         .width(this.width - 100)
         .height(this.height - 120)
@@ -156,18 +136,14 @@
       graph(document.getElementById('graphContainer'));
       graph.on('loaded', (graphData) => {
         vueCtx.showSpinner = false;
-        // const gr = graphData.graph;
         const topics = graphData.topics;
         vueCtx.topics = topics.slice(0, 12);
       });
       graph.on('failed', () => {
-        console.log('the graph did not load... :-(');
         vueCtx.showFailed = true;
         vueCtx.showSpinner = false;
       });
       graph.on('selected', (v) => {
-        console.log('selected event fired...');
-        console.log(v);
         vueCtx.filtersToApply.push({
           type: 'topic',
           term: v.subject.term,
@@ -175,36 +151,24 @@
         });
       });
       graph.on('unselected', (v) => {
-        // this.$emit('selected', v.selected);
-        console.log('unselected event fired...');
-        console.log(v);
         vueCtx.filtersToApply = vueCtx.filtersToApply.filter(f => f.term !== v.subject.term);
       });
-      graph.on('topicSelected', (t) => {
-        console.log('selected topic!!');
-        console.log(t);
-        // this.$emit('selectedTopic', t);
-      });
-      graph.on('topicUnselected', (t) => {
-        console.log('unselected topic!!');
-        console.log(t);
-        // this.$emit('selectedTopic', t);
-      });
+      // graph.on('topicSelected', (t) => {
+      //   console.log('selected topic!!');
+      //   console.log(t);
+      //   // this.$emit('selectedTopic', t);
+      // });
+      // graph.on('topicUnselected', (t) => {
+      //   console.log('unselected topic!!');
+      //   console.log(t);
+      // });
     },
     watch: {
-//      unselect() {
-//        this.unselect.forEach((n) => {
-//          graph.select(n);
-//        });
-//        // graph.select(this.unselect);
-//      },
       removedFilter(f) {
         if (f.type === 'topic') {
           graph.unselect(graph.getVertexByTerm(f.term));
         }
       },
-      // compoundProperty() {
-      // },
     },
   };
 </script>

@@ -1,18 +1,6 @@
 <template>
   <div v-show="filters"> <!-- root -->
 
-    <!--<div class="filters-container">-->
-      <!--<filter-pill-->
-        <!--v-for="(filter, index) in filters"-->
-        <!--:key="index"-->
-        <!--:filter="filter"-->
-        <!--@removeFilter="removeFilter"-->
-        <!--@addFilterToSearch="addFilterToSearch"-->
-        <!--@setFilterAsQuery="setFilterAsQuery"-->
-      <!--&gt;-->
-      <!--</filter-pill>-->
-    <!--</div>-->
-
     <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
 
     <div v-show="totalAbstracts===0 && !loading" class="total-abstracts">
@@ -27,7 +15,6 @@
       <div class="abstracts-container">
         <div class="card-container" v-for="abstract in acc">
           <abstract-card
-            @addFilter="addFilter"
             :abstract="abstract"
           ></abstract-card>
         </div>
@@ -98,19 +85,12 @@
     props: ['filters'],
     watch: {
       filters() {
-        console.log('all filters in publications...');
-        console.log(this.filters);
         this.acc = [];
         this.lastAbstract = '';
       },
-//      query() {
-//        this.acc = [];
-//        this.lastAbstract = '';
-//      },
       apiUrl() {
         this.loading = true;
         const apiUrl = this.apiUrl.split('#-#')[0];
-        console.log(`apiUrl: ${apiUrl}`);
         axios.get(apiUrl)
           .then((resp) => {
             this.loading = false;
@@ -133,20 +113,6 @@
       },
     },
     methods: {
-      addFilter(who) {
-        this.filters.push(who);
-      },
-      // addFilterToSearch(who) {
-      //   // relay, why it is not propagated up?
-      //   this.$emit('addFilterToSearch', who);
-      // },
-      // removeFilter(who) {
-      //   this.$emit('removeFilter', who);
-      // },
-      // setFilterAsQuery(who) {
-      //   this.$emit('setFilterAsQuery', who);
-      // },
-
       // fetch data is here to work with the infinite scrolling (not working for now)
       loadMore() {
         this.lastAbstract = this.acc[this.acc.length - 1];
@@ -172,27 +138,8 @@
     font-size: 2em;
   }
 
-  /*.abstract-card {*/
-    /*margin-top: 20px;*/
-    /*padding: 10px;*/
-    /*padding: 10px;*/
-    /*border-radius: 5px;*/
-    /*box-shadow: 10px 10px 5px #888888;*/
-    /*-webkit-box-shadow: 10px 10px 5px #888888;*/
-    /*-moz--webkit-box-shadow: 10px 10px 5px #888888;*/
-    /*border: 1px #888888;*/
-    /*border-style: solid;*/
-    /*background: #ffffff;*/
-  /*}*/
-
   .total-abstracts {
     margin-left: 20px;
     font-size: 0.7em;
   }
-
-  /*.filters-container {*/
-    /*margin-top: 10px;*/
-    /*margin-bottom: 5px;*/
-  /*}*/
-
 </style>
