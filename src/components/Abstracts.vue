@@ -1,21 +1,9 @@
 <template>
-  <div v-show="query"> <!-- root -->
-
-    <div class="filters-container">
-      <filter-pill
-        v-for="(filter, index) in filters"
-        :key="index"
-        :filter="filter"
-        @removeFilter="removeFilter"
-        @addFilterToSearch="addFilterToSearch"
-        @setFilterAsQuery="setFilterAsQuery"
-      >
-      </filter-pill>
-    </div>
+  <div v-show="filters"> <!-- root -->
 
     <i class="fa fa-2x fa-spinner fa-spin" v-show="loading"></i>
 
-    <div v-show="totalAbstracts==0 && !loading" class="total-abstracts">
+    <div v-show="totalAbstracts===0 && !loading" class="total-abstracts">
       There are no abstracts matching your query and filters
     </div>
 
@@ -27,9 +15,6 @@
       <div class="abstracts-container">
         <div class="card-container" v-for="abstract in acc">
           <abstract-card
-            @addSelectionToQuery="addFilterToSearch"
-            @setFilterAsQuery="setFilterAsQuery"
-            @addFilter="addFilter"
             :abstract="abstract"
           ></abstract-card>
         </div>
@@ -48,14 +33,15 @@
 
 <script>
   import axios from 'axios';
+  import { mapMutations } from 'vuex';
   import infiniteScroll from 'vue-infinite-scroll';
   import AbstractCard from './AbstractCard.vue';
   import FilterPill from './FilterPill.vue';
   import lucene from '../services/lucene';
-
+  import apiBaseUrl from '../services/api';
 
   // const apiBaseUrl = 'https://qkorhkwgf1.execute-api.eu-west-1.amazonaws.com/dev/search';
-  const apiBaseUrl = 'https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev/search';
+  // const apiBaseUrl = 'https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev/search';
 
   export default {
     components: {
@@ -69,13 +55,12 @@
       apiUrl() {
         /* eslint no-underscore-dangle: 0 */
         /* eslint no-unused-expressions: 0 */
-        const query = lucene.compose3(this.query, this.filters);
+        const query = lucene.compose3(this.filters);
         let search = `query=${query}`;
         if (this.lastAbstract) {
-          search = `${search}&search_after=${this.lastAbstract.sort[0]}&search_after_id=${this.lastAbstract._id}`;
+          search = `${search}&aggs=true&search_after=${this.lastAbstract.sort[0]}&search_after_id=${this.lastAbstract._id}`;
         }
-        const url = `${apiBaseUrl}?${search}`;
-        console.log(`new url... ${url}`);
+        const url = `${apiBaseUrl}/search?aggs=true&${search}`;
         this.counter += 1;
         return `${url}#-#${this.counter}`;
       },
@@ -97,13 +82,9 @@
         },
       };
     },
-    props: ['query', 'filters'],
+    props: ['filters'],
     watch: {
       filters() {
-        this.acc = [];
-        this.lastAbstract = '';
-      },
-      query() {
         this.acc = [];
         this.lastAbstract = '';
       },
@@ -113,6 +94,9 @@
         axios.get(apiUrl)
           .then((resp) => {
             this.loading = false;
+            // Add the aggregations to the Vuex store...
+            this.setAggs(resp.data.aggregations);
+
             const data = resp.data.hits;
             this.abstracts = data.hits;
             this.acc = [...this.acc, ...this.abstracts];
@@ -129,24 +113,13 @@
       },
     },
     methods: {
-      addFilter(who) {
-        this.filters.push(who);
-      },
-      addFilterToSearch(who) {
-        // relay, why it is not propagated up?
-        this.$emit('addFilterToSearch', who);
-      },
-      removeFilter(who) {
-        this.$emit('removeFilter', who);
-      },
-      setFilterAsQuery(who) {
-        this.$emit('setFilterAsQuery', who);
-      },
-
       // fetch data is here to work with the infinite scrolling (not working for now)
       loadMore() {
         this.lastAbstract = this.acc[this.acc.length - 1];
       },
+      ...mapMutations('aggs', [
+        'setAggs',
+      ]),
     },
   };
 
@@ -165,26 +138,8 @@
     font-size: 2em;
   }
 
-  /*.abstract-card {*/
-    /*margin-top: 20px;*/
-    /*padding: 10px;*/
-    /*padding: 10px;*/
-    /*border-radius: 5px;*/
-    /*box-shadow: 10px 10px 5px #888888;*/
-    /*-webkit-box-shadow: 10px 10px 5px #888888;*/
-    /*-moz--webkit-box-shadow: 10px 10px 5px #888888;*/
-    /*border: 1px #888888;*/
-    /*border-style: solid;*/
-    /*background: #ffffff;*/
-  /*}*/
-
   .total-abstracts {
+    margin-left: 20px;
     font-size: 0.7em;
   }
-
-  .filters-container {
-    margin-top: 10px;
-    margin-bottom: 5px;
-  }
-
 </style>

@@ -4,4 +4,5 @@
  * 2. Netlify will automatically deploy the new name.
  * 3. Note that this won't change the domain name :-)
  */
-export default 'Library';
+export const name = 'Library';
+export const version = 'alpha-3';

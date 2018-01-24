@@ -2,7 +2,7 @@
   <div> <!-- root -->
     <div>
       <div class="paper-title">
-        <a @click="setArticleAsQuery(pmid)" class="epmc_citation_link">{{title}}</a>
+        <a target="_blank" :href="epmcLink" class="epmc_citation_link">{{title}}</a>
       </div>
 
       <div @mouseup="selectText" class="paper-authors"
@@ -29,10 +29,7 @@
         </span>
 
         <q-context-menu ref="selectedText">
-          <selection-tooltip @addSelectionToQuery="addSelectionToQuery"
-                             @setSelectionAsQuery="setSelectionAsQuery"
-                             @addSelectionToFilter="addFilter"
-                             :selection="selectedText"
+          <selection-tooltip :selection="selectedText"
           ></selection-tooltip>
         </q-context-menu>
       </div>
@@ -45,32 +42,26 @@
         <span class="paper-pages">{{pages}}</span>
       </div>
 
-      <!--<div class="paper-pmid">PMID: {{pmid}}</div>-->
-
       <!-- Pills with more details -->
-      <span v-show="showFull==false && abstractText" @click="showFull=true; showAbstract();" class="paper-show-more-or-less">[Show abstract]</span>
+      <span v-show="showFull===false && abstractText" @click="showFull=true; showAbstract();" class="paper-show-more-or-less">[Show abstract]</span>
       <span v-show="!abstractText" class="paper-show-more-or-less inactive">[No abstract available]</span>
-      <span v-show="showFull==true" @click="showFull=false" class="paper-show-more-or-less">[Hide abstract]</span>
+      <span v-show="showFull===true" @click="showFull=false" class="paper-show-more-or-less">[Hide abstract]</span>
 
-      <span v-show="showSimilar==false" @click="showSimilar=true; searchSimilar();" class="paper-show-more-or-less">[Show similar articles]</span>
-      <span v-show="showSimilar==true" @click="showSimilar=false" class="paper-show-more-or-less">[Hide similar articles]</span>
+      <span v-show="showSimilar===false" @click="showSimilar=true; searchSimilar();" class="paper-show-more-or-less">[Show similar articles]</span>
+      <span v-show="showSimilar===true" @click="showSimilar=false" class="paper-show-more-or-less">[Hide similar articles]</span>
 
       <!-- Abstract -->
       <div class="subsection" v-show="showFull">
         <div v-show="loadingAbstract"><i class="fa fa-spinner fa-spin"></i></div>
         <div @contextmenu="selectText" class="paper-abstract-full">
-        <!--<div @mouseup="selectAbstractText" class="paper-abstract-full">-->
-          <!--<span class="abstract">{{abstractText}}</span>-->
           <span :id="abstractDomId" class="abstract"></span>
           <span data-entity="GENE">Gene</span>
           <span data-entity="DISEASE">Disease</span>
           <span data-entity="DRUG">Drug</span>
           <span data-entity="TARGET&DISEASE">Target and disease</span>
+
           <q-context-menu ref="selectedText">
-            <selection-tooltip @addSelectionToQuery="addSelectionToQuery"
-                               @setSelectionAsQuery="setSelectionAsQuery"
-                               @addSelectionToFilter="addFilter"
-                               :selection="selectedText"
+            <selection-tooltip :selection="selectedText"
             ></selection-tooltip>
           </q-context-menu>
 
@@ -99,6 +90,7 @@
   import Vue from 'vue';
   import axios from 'axios';
   import selectionTooltip from './SelectionTooltip.vue';
+  import apiBaseUrl from '../services/api';
 
   const apiBaseUrl = 'https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev';
 
@@ -132,24 +124,11 @@
       };
     },
     methods: {
+      parseAuthor(d) {
+        return `${d.LastName} ${d.Initials}`;
+      },
       setArticleAsQuery(who) {
         this.setSelectionAsQuery(who);
-      },
-      addFilter() {
-        this.$emit('addFilter', {
-          type: 'selection',
-          term: this.selectedText,
-        });
-      },
-      setSelectionAsQuery(what) {
-        this.$emit('setFilterAsQuery', {
-          luceneQuery: `"${what}"`,
-        });
-      },
-      addSelectionToQuery(what) {
-        this.$emit('addSelectionToQuery', {
-          luceneQuery: `"${what}"`,
-        });
       },
       selectText() {
         const selection = window.getSelection();
@@ -185,17 +164,14 @@
 
         this.loadingSimilarArticles = true;
         const vueCtx = this;
-        const url = `https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev/document-more-like-this/${this.abstract._id}`;
+        const url = `${apiBaseUrl}/document-more-like-this/${this.abstract._id}`;
         axios.get(url)
           .then((resp) => {
             /* eslint no-param-reassign: 0 */
             vueCtx.loadingSimilarArticles = false;
             this.similar = resp.data.hits.hits.map((p) => {
               p.title = p._source.title;
-//              if (p.title.length > 120) {
-//                p.title = `${p.title.substr(0, 120)}...`;
-//              }
-              const authorNames = p._source.authors.map((d) => d.short_name);
+              const authorNames = p._source.authors.map((d) => this.parseAuthor(d));
               if (authorNames.length === 1) {
                 return authorNames[0];
               }
@@ -226,8 +202,7 @@
         if (!this.abstract._source.authors || !this.abstract._source.authors.length) {
           return '';
         }
-//        const authorNames = this.abstract._source.authors.map((d) => d.short_name);
-        const authorNames = this.abstract._source.authors.map((d) => `${d.LastName} ${d.Initials}`);
+        const authorNames = this.abstract._source.authors.map((d) => this.parseAuthor(d));
         if (authorNames.length === 1) {
           this.noMoreAuthors = true;
           return authorNames[0];
@@ -242,8 +217,7 @@
         if (!this.abstract._source.authors || !this.abstract._source.authors.length) {
           return '';
         }
-        // const authorNames = this.abstract._source.authors.map((d) => d.short_name);
-        const authorNames = this.abstract._source.authors.map((d) => `${d.LastName} ${d.Initials}`);
+        const authorNames = this.abstract._source.authors.map((d) => this.parseAuthor(d));
         if (authorNames.length === 1) {
           return authorNames[0];
         }
@@ -286,7 +260,6 @@
 
 <style lang="scss">
   $lighter-color: #777777;
-
   .paper-show-more-or-less {
     color: #2e9dfd;
     font-size: 0.8em;
@@ -296,17 +269,14 @@
       cursor: text;
     }
   }
-
   .paper-pmid {
     font-size: 0.8em;
     color: $lighter-color;
     margin-bottom: 1em;
   }
-
   .paper-authors {
     margin-top: 0.5em;
   }
-
   .paper-journal {
     .paper-year {
       font-weight: bold;
@@ -317,7 +287,6 @@
     margin-top: 0.2em;
     margin-bottom: 0.2em;
   }
-
   .similar-paper {
     margin-bottom: 10px;
     .similar-paper-title {
@@ -325,7 +294,6 @@
       cursor: pointer;
     }
   }
-
   .paper-abstract-short {
     position: relative;
   }
@@ -341,7 +309,6 @@
     );
     pointer-events: none; /* so the text is still selectable */
   }
-
   .subsection {
     margin-top: 20px;
     font-size: 0.8em;
@@ -351,12 +318,9 @@
       margin-bottom: 10px;
     }
   }
-
   .entities {
     line-height: 1.5em;
   }
-
-
   @mixin entity() {
     padding: 0.15em 0.15em;
     margin: 0px 0.25em;
@@ -365,7 +329,6 @@
     border-radius: 0.25em;
     border: 1px solid;
   }
-
   @mixin entity-after() {
     box-sizing: border-box;
     /*content: attr(data-entity) " | " attr(reference-db);*/
@@ -378,7 +341,6 @@
     vertical-align: middle;
     margin: 0px 0px 0.1rem 0.5rem;
   }
-
   [data-entity="DISEASE"] {
     @include entity();
   }
@@ -391,8 +353,6 @@
   [data-entity="DRUG"] {
     @include entity();
   }
-
-
   [data-entity="DISEASE"]::after {
     @include entity-after();
   }
@@ -405,20 +365,19 @@
   [data-entity="DRUG"]::after {
     @include entity-after();
   }
-
   /*[data-entity][data-entity="GENE"] {*/
-    /*background: rgba(166, 226, 45, 0.2);*/
-    /*border-color: rgb(166, 226, 45);*/
+  /*background: rgba(166, 226, 45, 0.2);*/
+  /*border-color: rgb(166, 226, 45);*/
   /*}*/
   /*[data-entity][data-entity="GENE"]::after {*/
-    /*background: rgb(166, 226, 45);*/
+  /*background: rgb(166, 226, 45);*/
   /*}*/
   /*[data-entity][data-entity="GENE"] {*/
-    /*background: rgba(196, 146, 145, 0.2);*/
-    /*border-color: rgb(196, 146, 145);*/
+  /*background: rgba(196, 146, 145, 0.2);*/
+  /*border-color: rgb(196, 146, 145);*/
   /*}*/
   /*[data-entity][data-entity="GENE"]::after {*/
-    /*background: rgb(196, 146, 145);*/
+  /*background: rgb(196, 146, 145);*/
   /*}*/
   [data-entity][data-entity="DRUG"] {
     background: rgba(224, 0, 132, 0.2);
@@ -428,11 +387,11 @@
     background: rgb(224, 0, 132);
   }
   /*[data-entity][data-entity="DRUG"] {*/
-    /*background: rgba(67, 198, 102, 0.2);*/
-    /*border-color: rgb(67, 198, 102);*/
+  /*background: rgba(67, 198, 102, 0.2);*/
+  /*border-color: rgb(67, 198, 102);*/
   /*}*/
   /*[data-entity][data-entity="DRUG"]::after {*/
-    /*background: rgb(67, 198, 102);*/
+  /*background: rgb(67, 198, 102);*/
   /*}*/
   [data-entity][data-entity="DISEASE"] {
     background: rgba(67, 198, 252, 0.2);
@@ -442,95 +401,95 @@
     background: rgb(67, 198, 252);
   }
   /*[data-entity][data-entity="CHEMICAL"] {*/
-    /*background: rgba(253, 151, 32, 0.2);*/
-    /*border-color: rgb(253, 151, 32);*/
+  /*background: rgba(253, 151, 32, 0.2);*/
+  /*border-color: rgb(253, 151, 32);*/
   /*}*/
   /*[data-entity][data-entity="CHEMICAL"]::after {*/
-    /*background: rgb(253, 151, 32);*/
+  /*background: rgb(253, 151, 32);*/
   /*}*/
   /*[data-entity][data-entity="ANATOMY"] {*/
-    /*background: rgba(253, 151, 32, 0.2);*/
-    /*border-color: rgb(253, 151, 32);*/
+  /*background: rgba(253, 151, 32, 0.2);*/
+  /*border-color: rgb(253, 151, 32);*/
   /*}*/
   /*[data-entity][data-entity="ANATOMY"]::after {*/
-    /*background: rgb(253, 151, 32);*/
+  /*background: rgb(253, 151, 32);*/
   /*}*/
   /*[data-entity][data-entity="NAMEDGROUP"] {*/
-    /*background: rgba(142, 125, 255, 0.2);*/
-    /*border-color: rgb(142, 125, 255);*/
+  /*background: rgba(142, 125, 255, 0.2);*/
+  /*border-color: rgb(142, 125, 255);*/
   /*}*/
   /*[data-entity][data-entity="NAMEDGROUP"]::after {*/
-    /*background: rgb(142, 125, 255);*/
+  /*background: rgb(142, 125, 255);*/
   /*}*/
   /*[data-entity][data-entity="PROCESS"] {*/
-    /*background: rgba(255, 204, 0, 0.2);*/
-    /*border-color: rgb(255, 204, 0);*/
+  /*background: rgba(255, 204, 0, 0.2);*/
+  /*border-color: rgb(255, 204, 0);*/
   /*}*/
   /*[data-entity][data-entity="PROCESS"]::after {*/
-    /*background: rgb(255, 204, 0);*/
+  /*background: rgb(255, 204, 0);*/
   /*}*/
   /*[data-entity][data-entity="PSICHIATRY"] {*/
-    /*background: rgba(255, 204, 0, 0.2);*/
-    /*border-color: rgb(255, 204, 0);*/
+  /*background: rgba(255, 204, 0, 0.2);*/
+  /*border-color: rgb(255, 204, 0);*/
   /*}*/
   /*[data-entity][data-entity="PSICHIATRY"]::after {*/
-    /*background: rgb(255, 204, 0);*/
+  /*background: rgb(255, 204, 0);*/
   /*}*/
   /*[data-entity][data-entity="PHENOTYPE"] {*/
-    /*background: rgba(255, 204, 0, 0.2);*/
-    /*border-color: rgb(255, 204, 0);*/
+  /*background: rgba(255, 204, 0, 0.2);*/
+  /*border-color: rgb(255, 204, 0);*/
   /*}*/
   /*[data-entity][data-entity="PHENOTYPE"]::after {*/
-    /*background: rgb(255, 204, 0);*/
+  /*background: rgb(255, 204, 0);*/
   /*}*/
   /*[data-entity][data-entity="INFORMATIONSCIENCE"] {*/
-    /*background: rgba(47, 187, 171, 0.2);*/
-    /*border-color: rgb(47, 187, 171);*/
+  /*background: rgba(47, 187, 171, 0.2);*/
+  /*border-color: rgb(47, 187, 171);*/
   /*}*/
   /*[data-entity][data-entity="INFORMATIONSCIENCE"]::after {*/
-    /*background: rgb(47, 187, 171);*/
+  /*background: rgb(47, 187, 171);*/
   /*}*/
   /*[data-entity][data-entity="GENE"] {*/
-    /*background: rgba(47, 187, 171, 0.2);*/
-    /*border-color: rgb(47, 187, 171);*/
+  /*background: rgba(47, 187, 171, 0.2);*/
+  /*border-color: rgb(47, 187, 171);*/
   /*}*/
   /*[data-entity][data-entity="GENE"]::after {*/
-    /*background: rgb(47, 187, 171);*/
+  /*background: rgb(47, 187, 171);*/
   /*}*/
   /*[data-entity][data-entity="ANTROPOLOGY"] {*/
-    /*background: rgba(153, 153, 153, 0.2);*/
-    /*border-color: rgb(153, 153, 153);*/
+  /*background: rgba(153, 153, 153, 0.2);*/
+  /*border-color: rgb(153, 153, 153);*/
   /*}*/
   /*[data-entity][data-entity="ANTROPOLOGY"]::after {*/
-    /*background: rgb(153, 153, 153);*/
+  /*background: rgb(153, 153, 153);*/
   /*}*/
   /*[data-entity][data-entity="HUMANITIES"] {*/
-    /*background: rgba(153, 153, 153, 0.2);*/
-    /*border-color: rgb(153, 153, 153);*/
+  /*background: rgba(153, 153, 153, 0.2);*/
+  /*border-color: rgb(153, 153, 153);*/
   /*}*/
   /*[data-entity][data-entity="HUMANITIES"]::after {*/
-    /*background: rgb(153, 153, 153);*/
+  /*background: rgb(153, 153, 153);*/
   /*}*/
   /*[data-entity][data-entity="HEALTHCARE"] {*/
-    /*background: rgba(153, 153, 153, 0.2);*/
-    /*border-color: rgb(153, 153, 153);*/
+  /*background: rgba(153, 153, 153, 0.2);*/
+  /*border-color: rgb(153, 153, 153);*/
   /*}*/
   /*[data-entity][data-entity="HEALTHCARE"]::after {*/
-    /*background: rgb(153, 153, 153);*/
+  /*background: rgb(153, 153, 153);*/
   /*}*/
   /*[data-entity][data-entity="TECHNOLOGY"] {*/
-    /*background: rgba(153, 153, 153, 0.2);*/
-    /*border-color: rgb(153, 153, 153);*/
+  /*background: rgba(153, 153, 153, 0.2);*/
+  /*border-color: rgb(153, 153, 153);*/
   /*}*/
   /*[data-entity][data-entity="TECHNOLOGY"]::after {*/
-    /*background: rgb(153, 153, 153);*/
+  /*background: rgb(153, 153, 153);*/
   /*}*/
   /*[data-entity][data-entity="PUBLICATION"] {*/
-    /*background: rgba(153, 153, 53, 0.2);*/
-    /*border-color: rgb(153, 153, 53);*/
+  /*background: rgba(153, 153, 53, 0.2);*/
+  /*border-color: rgb(153, 153, 53);*/
   /*}*/
   /*[data-entity][data-entity="PUBLICATION"]::after {*/
-    /*background: rgb(153, 153, 53);*/
+  /*background: rgb(153, 153, 53);*/
   /*}*/
   [data-entity][data-entity="TARGET&DISEASE"] {
     background: rgba(105, 145, 243, 0.2);
@@ -542,13 +501,13 @@
     background: rgb(105, 145, 243);
   }
   /*[data-entity][data-entity="PATHWAY"] {*/
-    /*background: rgba(205, 85, 143, 0.2);*/
-    /*border-color: rgb(205, 85, 143);*/
-    /*!*   display: inline; *!*/
-    /*border: 1px dashed;*/
+  /*background: rgba(205, 85, 143, 0.2);*/
+  /*border-color: rgb(205, 85, 143);*/
+  /*!*   display: inline; *!*/
+  /*border: 1px dashed;*/
   /*}*/
   /*[data-entity][data-entity="PATHWAY"]::after {*/
-    /*background: rgb(205, 85, 143);*/
+  /*background: rgb(205, 85, 143);*/
   /*}*/
   [data-entity][data-entity="GENE"] {
     background: rgba(87, 227, 81, 0.2);
@@ -558,32 +517,32 @@
     background: rgb(87, 227, 81);
   }
   /*[data-entity][data-entity="LOC"] {*/
-    /*background: rgba(180, 180, 180, 0.2);*/
-    /*border-color: rgb(180, 180, 180);*/
+  /*background: rgba(180, 180, 180, 0.2);*/
+  /*border-color: rgb(180, 180, 180);*/
   /*}*/
   /*[data-entity][data-entity="LOC"]::after {*/
-    /*background: rgb(180, 180, 180);*/
+  /*background: rgb(180, 180, 180);*/
   /*}*/
-
   /*.selectedWordTitle {*/
-    /*padding: 5px;*/
-    /*background: #dddddd;*/
-    /*vertical-align: baseline;*/
-    /*.actions {*/
-      /*top: 2px;*/
-      /*right: 0px;*/
-      /*padding-left: 5px;*/
-      /*display: inline-block;*/
-      /*vertical-align: baseline;*/
-      /*> .action-item {*/
-        /*padding-right: 1px;*/
-        /*padding-top: 2px;*/
-        /*padding-bottom: 2px;*/
-        /*cursor: pointer;*/
-        /*> i {*/
-          /*vertical-align: baseline;*/
-        /*}*/
-      /*}*/
-    /*}*/
+  /*padding: 5px;*/
+  /*background: #dddddd;*/
+  /*vertical-align: baseline;*/
+  /*.actions {*/
+  /*top: 2px;*/
+  /*right: 0px;*/
+  /*padding-left: 5px;*/
+  /*display: inline-block;*/
+  /*vertical-align: baseline;*/
+  /*> .action-item {*/
+  /*padding-right: 1px;*/
+  /*padding-top: 2px;*/
+  /*padding-bottom: 2px;*/
+  /*cursor: pointer;*/
+  /*> i {*/
+  /*vertical-align: baseline;*/
+  /*}*/
+  /*}*/
+  /*}*/
   /*}*/
 </style>
+

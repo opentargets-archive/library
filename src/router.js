@@ -21,7 +21,37 @@ export default new VueRouter({
    */
 
   routes: [
-    { path: '/', component: load('Index') }, // Default
-    { path: '*', component: load('Error404') }, // Not found
+    // { path: '/', component: load('Index') }, // Default
+    // { path: '*', component: load('Error404') }, // Not found
+    {
+      name: 'home',
+      path: '/',
+      component: load('Home'),
+    }, // Default
+    {
+      name: 'publications',
+      path: '/publications',
+      component: load('Publications'),
+    },
+    {
+      name: 'dateRange',
+      path: '/date-range',
+      component: load('Daterange'),
+    },
+    {
+      name: 'trends',
+      path: '/trends',
+      component: load('Trends'),
+    },
+    {
+      name: 'topics',
+      path: '/topics',
+      component: load('resultsGraph'),
+    },
+    {
+      name: 'error',
+      path: '*',
+      component: load('Error404'),
+    }, // Not found
   ],
 });

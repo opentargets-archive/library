@@ -12,11 +12,10 @@
 
   export default {
     name: 'trend-timeline',
-    props: ['trend', 'last', 'width', 'height'],
+    props: ['trend', 'width', 'height', 'last'],
     computed: {
       term() {
-        const term = Object.keys(this.trend)[0];
-        return term;
+        return Object.keys(this.trend)[0];
       },
     },
     methods: {
@@ -45,16 +44,14 @@
         return;
       }
       const container = this.$el.querySelector('.ots-timeline');
-      // const width = this.$el.clientWidth - 20;
       const width = this.width - 20;
-      // const height = this.$el.clientHeight;
       const svg = d3.select(container)
         .append('svg')
         .attr('width', width)
         .attr('height', this.last ? (height + 50) : height)
         .append('g');
 
-      const data = this.complete(this.trend[this.term].term_counts);
+      const data = this.complete(this.trend[Object.keys(this.trend)[0]].term_counts);
 
       const xScale = d3.scaleTime()
         .domain([new Date(2002, 0, 1), new Date(2016, 12, 31)])
