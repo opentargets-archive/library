@@ -92,7 +92,7 @@
   import selectionTooltip from './SelectionTooltip.vue';
   import apiBaseUrl from '../services/api';
 
-  const apiBaseUrl = 'https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev';
+  // const apiBaseUrl = 'https://vy36p7a9ld.execute-api.eu-west-1.amazonaws.com/dev';
 
   /* eslint no-underscore-dangle: 0 */
   export default {
